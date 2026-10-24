@@ -1,0 +1,404 @@
+/* ==========================================================
+   RF-01 / INTRO
+   ========================================================== */
+
+:root {
+  --intro-top: calc(var(--hud-inset) + var(--hud-ruler) + var(--sp-4));
+  --intro-vw: clamp(120px, 14vw, 220px);  /* 용기 폭 */
+  --intro-vh: clamp(220px, 44vh, 420px);  /* 용기 높이 */
+  --intro-fill: 28%;                      /* 액체 수면 위치 (위에서부터) */
+}
+
+/* ── 인트로 동안: 스크롤 잠금 + 히어로 애니메이션 일시정지 ── */
+html.rf-intro-active,
+html.rf-intro-active body {
+  overflow: hidden;
+}
+html.rf-intro-active .rf-hero * {
+  animation-play-state: paused !important;
+}
+
+/* ── 전체 판 ── */
+.rf-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 8500;   /* HUD(8000) 위, 이비의 빛(9000)·커서(9500) 아래 */
+  overflow: hidden;
+  background: radial-gradient(
+    120% 80% at 50% 0%,
+    var(--paper-light) 0%,
+    var(--paper) 55%,
+    var(--paper-deep) 100%
+  );
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 걷히기: 아래에서 위로 */
+.rf-intro.is-exit {
+  pointer-events: none;
+  animation: rf-intro-wipe 520ms var(--ease-precise) forwards;
+}
+
+/* ── 그리드 ── */
+.rf-intro__grid {
+  position: absolute;
+  inset: 0;
+}
+
+.rf-intro__v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  left: calc(var(--gutter) + (100% - 2 * var(--gutter)) * var(--i) / 12);
+  background: var(--ink-10);
+  transform: scaleY(0);
+  animation: rf-intro-y 700ms var(--ease-precise) calc(350ms + var(--k) * 45ms) forwards;
+}
+
+.rf-intro__h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--ink-10);
+  transform: scaleX(0);
+  animation: rf-intro-x 800ms var(--ease-precise) 600ms forwards;
+}
+.rf-intro__h--a { top: 25%; }
+.rf-intro__h--b { top: 75%; }
+
+/* ── 첫 가로선 ── */
+.rf-intro__hwrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+}
+.rf-intro__hline {
+  position: absolute;
+  inset: 0;
+  background: var(--ink-60);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: rf-intro-x 600ms var(--ease-precise) 80ms forwards;
+}
+
+/* 예외: 비뚤게 그려졌다가 바로잡힘 */
+.rf-intro.is-tilt .rf-intro__hwrap {
+  transform: rotate(0.5deg);
+  animation: rf-intro-untilt 180ms var(--ease-precise) 900ms forwards;
+}
+
+/* ── 용기 ── */
+.rf-intro__vessel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--intro-vw);
+  height: var(--intro-vh);
+  transform: translate(-50%, -50%);
+}
+
+/* 테두리: 위 → 오른쪽 → 아래 → 왼쪽 순서로 그려짐 */
+.rf-intro__edge {
+  position: absolute;
+  background: var(--ink-40);
+}
+.rf-intro__edge--t {
+  top: 0; left: 0; right: 0; height: 1px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: rf-intro-x 300ms var(--ease-precise) 750ms forwards;
+}
+.rf-intro__edge--r {
+  top: 0; right: 0; bottom: 0; width: 1px;
+  transform: scaleY(0);
+  transform-origin: center top;
+  animation: rf-intro-y 300ms var(--ease-precise) 900ms forwards;
+}
+.rf-intro__edge--b {
+  bottom: 0; left: 0; right: 0; height: 1px;
+  transform: scaleX(0);
+  transform-origin: right center;
+  animation: rf-intro-x 300ms var(--ease-precise) 1050ms forwards;
+}
+.rf-intro__edge--l {
+  top: 0; left: 0; bottom: 0; width: 1px;
+  transform: scaleY(0);
+  transform-origin: center bottom;
+  animation: rf-intro-y 300ms var(--ease-precise) 1200ms forwards;
+}
+
+/* 눈금 */
+.rf-intro__scale {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  background-image:
+    repeating-linear-gradient(to bottom, var(--ink-40) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to bottom, var(--ink-20) 0 1px, transparent 1px 8px);
+  background-size: 10px 100%, 5px 100%;
+  background-position: top right, top right;
+  background-repeat: no-repeat;
+  opacity: 0;
+  animation: rf-intro-fade 400ms var(--ease-out) 1150ms forwards;
+}
+
+/* 모서리 + */
+.rf-intro__c {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  opacity: 0;
+  animation: rf-intro-fade 300ms var(--ease-out) 1300ms forwards;
+}
+.rf-intro__c::before,
+.rf-intro__c::after {
+  content: '';
+  position: absolute;
+  background: var(--ink-60);
+}
+.rf-intro__c::before { left: 0; right: 0; top: 5px; height: 1px; }
+.rf-intro__c::after  { top: 0; bottom: 0; left: 5px; width: 1px; }
+.rf-intro__c--tl { top: -6px; left: -6px; }
+.rf-intro__c--tr { top: -6px; right: -6px; }
+.rf-intro__c--bl { bottom: -6px; left: -6px; }
+.rf-intro__c--br { bottom: -6px; right: -6px; }
+
+/* 액체 */
+.rf-intro__clip {
+  position: absolute;
+  inset: 1px;
+  overflow: hidden;
+}
+.rf-intro__liquid {
+  position: absolute;
+  inset: 0;
+  transform: translateY(100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--evie-rgb), 0.08),
+    rgba(var(--ink-rgb), 0.07)
+  );
+  border-top: 1px solid var(--ink-40);   /* 수면 */
+  animation: rf-intro-fill 800ms var(--ease-out) 1150ms forwards;
+}
+
+/* 연녹색이 번지는 자국 (모양은 매번 다름) */
+.rf-intro__spread {
+  position: absolute;
+  top: 0;
+  left: var(--drop-x);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(var(--evie-rgb), 0.55),
+    rgba(var(--evie-rgb), 0.2) 55%,
+    rgba(var(--evie-rgb), 0) 100%
+  );
+  opacity: 0;
+  transform: translate(-50%, -20%) rotate(var(--rot)) scale(0.2);
+  animation: rf-intro-spread 800ms var(--ease-out) 2220ms forwards;
+}
+
+/* 떨어지는 방울 */
+.rf-intro__drop {
+  position: absolute;
+  left: var(--drop-x);
+  top: var(--intro-fill);
+  width: var(--drop-s);
+  height: var(--drop-s);
+  margin-left: calc(var(--drop-s) / -2);
+  margin-top: calc(var(--drop-s) * -1);
+  border-radius: 50%;
+  background: rgb(var(--evie-rgb));
+  box-shadow: inset 0 0 0 1px var(--ink-20);
+  opacity: 0;
+  animation: rf-intro-drop 320ms cubic-bezier(0.55, 0, 1, 0.45) 1950ms forwards;
+}
+
+/* 수면 물결 */
+.rf-intro__ripple {
+  position: absolute;
+  left: var(--drop-x);
+  top: var(--intro-fill);
+  width: 56px;
+  height: 9px;
+  border: 1px solid var(--ink-40);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.1);
+  animation: rf-intro-ripple 650ms var(--ease-out) 2250ms forwards;
+}
+
+/* 용기 라벨·부피 */
+.rf-intro__vlabel,
+.rf-intro__vol {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+  white-space: nowrap;
+  opacity: 0;
+  animation: rf-intro-fade 400ms var(--ease-out) 1150ms forwards;
+}
+.rf-intro__vlabel { bottom: 100%; left: 0; padding-bottom: 10px; }
+.rf-intro__vol    { top: 100%; right: 0; padding-top: 10px; }
+.rf-intro__vol b {
+  font-weight: 400;
+  color: var(--ink);
+}
+
+/* ── 개구리 (예외) ── */
+.rf-intro__frog {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--gutter) + 24px);
+  width: 26px;
+  height: 20px;
+  color: var(--ink-60);
+  transform: translateY(-100%);   /* 가로선 위에 앉아 있음 */
+  opacity: 0;
+  pointer-events: none;
+}
+.rf-intro.is-frog .rf-intro__frog {
+  opacity: 1;
+}
+
+/* ── 글자 ── */
+.rf-intro__ui {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--ink-60);
+  white-space: nowrap;
+  opacity: 0;
+  animation: rf-intro-fade 400ms var(--ease-out) 100ms forwards;
+}
+.rf-intro__ui b {
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.rf-intro__tl {
+  top: var(--intro-top);
+  left: var(--gutter);
+}
+
+.rf-intro__skip {
+  top: var(--intro-top);
+  right: var(--gutter);
+  padding: 0;
+  transition: color var(--dur-fast) linear;
+}
+.rf-intro__skip:hover {
+  color: var(--ink);
+}
+
+.rf-intro__pct {
+  left: var(--gutter);
+  bottom: calc(var(--hud-inset) + var(--sp-5));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.rf-intro__num {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 11vw, 10rem);
+  font-stretch: var(--display-stretch);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.rf-intro__num b {
+  font-weight: var(--display-weight);
+}
+.rf-intro__num small {
+  margin-left: 6px;
+  vertical-align: top;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--ink-60);
+}
+
+.rf-intro__status {
+  right: var(--gutter);
+  bottom: calc(var(--hud-inset) + var(--sp-5));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
+}
+.rf-intro__msg {
+  color: var(--ink);
+}
+.rf-intro__msg.is-alert {
+  color: var(--alert);   /* 예외일 때만 빨간색 */
+}
+
+/* ── 애니메이션 ── */
+@keyframes rf-intro-x      { to { transform: scaleX(1); } }
+@keyframes rf-intro-y      { to { transform: scaleY(1); } }
+@keyframes rf-intro-fade   { to { opacity: 1; } }
+@keyframes rf-intro-untilt { to { transform: rotate(0deg); } }
+@keyframes rf-intro-fill   { to { transform: translateY(var(--intro-fill)); } }
+
+@keyframes rf-intro-drop {
+  0%   { opacity: 0; transform: translateY(-48vh) scale(0.8, 1.5); }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; transform: translateY(0) scale(0.85, 1.35); }
+  100% { opacity: 0; transform: translateY(30%) scale(1.7, 0.4); }
+}
+
+@keyframes rf-intro-ripple {
+  0%   { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8); }
+}
+
+@keyframes rf-intro-spread {
+  30%  { opacity: 1; }
+  100% {
+    opacity: 0.8;
+    transform: translate(-50%, -20%) rotate(var(--rot)) scale(var(--sx), var(--sy));
+  }
+}
+
+@keyframes rf-intro-wipe {
+  from { clip-path: inset(0 0 0 0); }
+  to   { clip-path: inset(0 0 100% 0); }
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 600px) {
+  :root {
+    --intro-vw: 30vw;
+    --intro-vh: 38vh;
+  }
+  .rf-intro__v.is-odd {
+    display: none;   /* 그리드 12칸 → 6칸 */
+  }
+  .rf-intro__status {
+    top: calc(var(--intro-top) + 24px);
+    bottom: auto;
+    left: var(--gutter);
+    right: auto;
+    align-items: flex-start;
+    text-align: left;
+  }
+}

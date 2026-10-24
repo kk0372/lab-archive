@@ -1,0 +1,113 @@
+/* ==========================================================
+   RF-01 / ARCHIVE INTRO
+   ========================================================== */
+
+.rf-archive {
+  padding: var(--sp-8) var(--gutter);
+}
+
+/* ── 섹션 머리: (THE ARCHIVE) ───────── + ── */
+.rf-archive__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-7);
+}
+
+.rf-archive__headline {
+  flex: 1;
+  border-top: var(--line);
+}
+
+/* HUD 모서리와 같은 + 기호 (사이트의 반복 기호) */
+.rf-archive__mark {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  flex: none;
+}
+.rf-archive__mark::before,
+.rf-archive__mark::after {
+  content: '';
+  position: absolute;
+  background: var(--ink-60);
+}
+.rf-archive__mark::before {
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: 1px;
+}
+.rf-archive__mark::after {
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 1px;
+}
+
+.rf-archive__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-6);
+  padding-inline: clamp(0px, 5vw, 96px);  /* 추가: 좌우 안쪽 여백 */
+}
+
+.rf-archive__index {
+  grid-column: 1 / span 5;                /* 4칸 → 5칸 */
+}
+
+.rf-archive__body {
+  grid-column: 7 / span 6;
+  max-width: 34em;
+}
+
+.rf-archive__caption {
+  margin-bottom: var(--sp-4);
+}
+
+/* ── 본문 ── */
+.rf-archive__text {
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+  line-height: 1.6;           /* 1.75 → 1.6 */
+  letter-spacing: -0.015em;   /* 추가: 살짝 조여서 또렷하게 */
+  color: var(--ink);
+}
+.rf-archive__text + .rf-archive__text {
+  margin-top: var(--sp-4);
+}
+
+/* 특이사항: 작고 흐리게, 위에 가는 선 */
+.rf-archive__note {
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-3);
+  border-top: var(--line);
+  font-size: var(--fs-small);
+  line-height: 1.6;           /* 1.7 → 1.6 */
+  letter-spacing: -0.01em;    /* 추가 */
+  color: var(--ink-40);
+}
+
+/* ── 중간 화면: 표 5칸 ── */
+@media (max-width: 1200px) {
+  .rf-archive__index {
+    grid-column: 1 / span 5;
+  }
+}
+
+/* ── 좁은 화면: 위아래로 쌓기 ── */
+@media (max-width: 900px) {
+  .rf-archive {
+    padding-block: var(--sp-7);
+  }
+  .rf-archive__head {
+    margin-bottom: var(--sp-5);
+  }
+  .rf-archive__index,
+  .rf-archive__body {
+    grid-column: 1 / -1;
+  }
+  .rf-archive__grid {
+    padding-inline: 0;
+  }
+}

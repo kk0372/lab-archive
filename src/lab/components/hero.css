@@ -1,0 +1,198 @@
+/* ==========================================================
+   RF-01 / HERO
+   ========================================================== */
+
+.rf-hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  /* 위: HUD 눈금자 아래부터 / 아래: HUD 흐림 띠 위까지 */
+  padding:
+    calc(var(--hud-inset) + var(--hud-ruler) + var(--sp-4))
+    var(--gutter)
+    calc(var(--hud-veil-height) - 14px);
+}
+
+/* ── 상단 라벨 ── */
+.rf-hero__top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+/* ── 문구 + 메타 ── */
+.rf-hero__middle {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--sp-5);
+  padding-top: var(--sp-6);
+}
+
+.rf-hero__statement {
+  font-size: clamp(1.75rem, 3.6vw, 3.25rem);  /* 28px ~ 52px */
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.rf-hero__dim {
+  color: var(--ink-40);
+}
+
+.rf-hero__meta {
+  list-style: none;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.8;
+  color: var(--ink-60);
+}
+
+/* ── 대형 타이틀 ── */
+.rf-hero__titlebox {
+  position: relative;
+  margin-top: var(--sp-5);
+}
+
+.rf-hero__title {
+  display: inline-block;          /* 폭을 재기 위해 */
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 12vw;                /* 맞추기 전 임시값 */
+  font-stretch: var(--display-stretch);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--tracking-display);
+  line-height: 0.9;
+  padding-bottom: 0.1em;          /* 밑줄(_)이 잘리지 않게 */
+  text-transform: uppercase;
+  color: var(--ink);
+  clip-path: inset(0 100% 0 0);   /* 처음엔 숨김 → 스캔하며 드러남 */
+}
+
+/* 스캔 선 */
+.rf-hero__scan {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rf-hero.is-ready .rf-hero__title {
+  animation: rf-scan-reveal 1.4s var(--ease-precise) 0.15s forwards;
+}
+.rf-hero.is-ready .rf-hero__scan {
+  animation: rf-scan-line 1.4s var(--ease-precise) 0.15s forwards;
+}
+
+@keyframes rf-scan-reveal {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes rf-scan-line {
+  0%   { left: 0;    opacity: 1; }
+  90%  {             opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+/* ── 하단 줄 ── */
+.rf-hero__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-5);
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-60);
+}
+
+.rf-hero__subject {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 두 사람의 색 견본 (네모 = 클리닉) */
+.rf-hero__swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+}
+.rf-hero__swatch--evie {
+  background: var(--evie);
+  box-shadow: inset 0 0 0 1px var(--ink-20);
+}
+
+/* 스크롤 안내: 짧은 선 위로 작은 선분이 흘러감 */
+.rf-hero__scroll {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.rf-hero__scrollline {
+  position: relative;
+  width: 40px;
+  height: 1px;
+  overflow: hidden;
+  background: var(--ink-20);
+}
+.rf-hero__scrollline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: var(--ink);
+  animation: rf-scroll-flow 2.2s var(--ease-precise) infinite;
+}
+
+@keyframes rf-scroll-flow {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(250%); }
+}
+
+/* ── 순차 등장 ── */
+.rf-hero__fade {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.rf-hero.is-ready .rf-hero__fade {
+  animation: rf-fade-up 0.9s var(--ease-out) var(--d, 0s) forwards;
+}
+
+@keyframes rf-fade-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 600px) {
+  .rf-hero__middle {
+    padding-top: var(--sp-5);
+  }
+  .rf-hero__meta {
+    display: none;
+  }
+  .rf-hero__scroll {
+    display: none;
+  }
+}

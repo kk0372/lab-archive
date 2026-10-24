@@ -1,0 +1,108 @@
+/* ==========================================================
+   RF-01 / CURSOR + EVIE GLOW
+   ========================================================== */
+
+:root {
+  --glow-size: clamp(320px, 38vw, 640px); /* 빛의 크기 */
+  --glow-alpha: 0.2;                      /* 빛의 진하기 (0.3 ~ 0.7) */
+  --ring-size: 44px;
+  --ring-size-hover: 76px;
+  --ring-size-down: 34px;
+  --dot-size: 6px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --glow-size: 75vw;
+  }
+}
+
+/* ── 마우스 기기에서만 기본 커서를 숨김 ── */
+html.rf-has-cursor,
+html.rf-has-cursor * {
+  cursor: none !important;
+}
+
+/* 터치 기기: 점과 원은 표시하지 않음 */
+html:not(.rf-has-cursor) .rf-cursor {
+  display: none;
+}
+
+/* ── 이비의 빛 ── */
+.rf-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9000;
+  width: var(--glow-size);
+  height: var(--glow-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    rgba(var(--evie-rgb), var(--glow-alpha)) 0%,
+    rgba(var(--evie-rgb), calc(var(--glow-alpha) * 0.4)) 45%,
+    rgba(var(--evie-rgb), 0) 100%
+  );
+  mix-blend-mode: multiply; /* 종이 위에 비치는 색처럼 겹침 */
+  opacity: 0;
+  transition: opacity 900ms var(--ease-out);
+  will-change: transform;
+}
+
+html.rf-cursor-visible .rf-glow,
+html.rf-touch .rf-glow {
+  opacity: 1;
+}
+
+/* ── 큰 원 + 작은 점 ── */
+.rf-cursor__ring,
+.rf-cursor__dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9500;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+}
+
+html.rf-cursor-visible .rf-cursor__ring,
+html.rf-cursor-visible .rf-cursor__dot {
+  opacity: 1;
+}
+
+.rf-cursor__ring {
+  width: var(--ring-size);
+  height: var(--ring-size);
+  border: 1px solid var(--ink);
+  background: transparent;
+  transition:
+    width 450ms var(--ease-out),
+    height 450ms var(--ease-out),
+    background-color 450ms var(--ease-out),
+    border-color 450ms var(--ease-out),
+    opacity 300ms var(--ease-out);
+}
+
+.rf-cursor__dot {
+  width: var(--dot-size);
+  height: var(--dot-size);
+  background: var(--ink);
+  transition: opacity 300ms var(--ease-out);
+}
+
+/* 링크·버튼 위: 원이 커지고 안쪽이 아주 옅게 차오름 */
+.rf-cursor.is-hover .rf-cursor__ring {
+  width: var(--ring-size-hover);
+  height: var(--ring-size-hover);
+  background-color: var(--ink-10);
+  border-color: var(--ink-40);
+}
+
+/* 클릭하는 순간: 살짝 움츠러듦 */
+.rf-cursor.is-down .rf-cursor__ring {
+  width: var(--ring-size-down);
+  height: var(--ring-size-down);
+}

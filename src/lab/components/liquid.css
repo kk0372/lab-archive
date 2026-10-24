@@ -1,0 +1,105 @@
+/* ==========================================================
+   RF-01 / LIQUID SPECIMEN FRAME
+   ========================================================== */
+
+.rf-specimen {
+  position: absolute;
+  z-index: 1;                          /* 타이틀 위 */
+  left: 53%;
+  top: 20%;
+  width: clamp(200px, 22vw, 400px);
+  height: 54%;
+  border: 1px solid var(--ink-20);
+  pointer-events: none;
+}
+
+.rf-specimen__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* WebGL이 안 되는 기기: 빈 프레임만 */
+.rf-specimen.is-fallback .rf-specimen__canvas {
+  display: none;
+}
+
+/* ── 오른쪽 안쪽 눈금 (계량 실린더처럼) ── */
+.rf-specimen__scale {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  background-image:
+    repeating-linear-gradient(to bottom, var(--ink-40) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to bottom, var(--ink-20) 0 1px, transparent 1px 8px);
+  background-size: 10px 100%, 5px 100%;
+  background-position: top right, top right;
+  background-repeat: no-repeat;
+}
+
+/* ── 모서리 + ── */
+.rf-specimen__c {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+}
+.rf-specimen__c::before,
+.rf-specimen__c::after {
+  content: '';
+  position: absolute;
+  background: var(--ink-60);
+}
+.rf-specimen__c::before {
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: 1px;
+}
+.rf-specimen__c::after {
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 1px;
+}
+.rf-specimen__c--tl { top: -6px; left: -6px; }
+.rf-specimen__c--tr { top: -6px; right: -6px; }
+.rf-specimen__c--bl { bottom: -6px; left: -6px; }
+.rf-specimen__c--br { bottom: -6px; right: -6px; }
+
+/* ── 라벨 ── */
+.rf-specimen__label,
+.rf-specimen__readout {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+  white-space: nowrap;
+}
+.rf-specimen__label {
+  bottom: 100%;
+  left: 0;
+  padding-bottom: 10px;
+}
+.rf-specimen__readout {
+  top: 100%;
+  right: 0;
+  padding-top: 10px;
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 600px) {
+  .rf-specimen {
+    left: auto;
+    right: var(--gutter);
+    top: 30%;
+    width: 44vw;
+    height: 36%;
+  }
+}

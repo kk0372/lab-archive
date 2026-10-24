@@ -1,0 +1,171 @@
+/* ==========================================================
+   RF-01 / GLOBAL
+   ========================================================== */
+
+/* ── 리셋 ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  word-break: keep-all;          /* 한글을 단어 단위로 줄바꿈 */
+  overflow-wrap: break-word;
+}
+
+img, svg, canvas, video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--evie);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ── 공간: 위쪽이 살짝 밝은 형광등 조명 ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 80% at 50% 0%,
+    var(--paper-light) 0%,
+    var(--paper) 55%,
+    var(--paper-deep) 100%
+  );
+}
+
+/* ── 서리 낀 유리 같은 미세 입자 ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 200px 200px;
+}
+
+/* ==========================================================
+   공용 클래스 (앞으로 모든 페이지에서 재사용)
+   ========================================================== */
+
+/* 좌우 여백이 있는 기본 컨테이너 */
+.rf-container {
+  width: 100%;
+  padding-inline: var(--gutter);
+}
+
+/* 대문자 모노 라벨: "THE STUDIO", "EST." 같은 것 */
+.rf-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 400;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-60);
+  line-height: 1.4;
+}
+
+/* 숫자·측정값 */
+.rf-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;   /* 숫자 폭 고정: 바뀔 때 흔들리지 않음 */
+}
+
+/* 대형 타이틀 */
+.rf-display {
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-stretch: var(--display-stretch);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--tracking-display);
+  line-height: 0.88;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* Givre식 큰 문단 */
+.rf-lead {
+  font-size: var(--fs-lead);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* 가는 구분선 */
+.rf-rule {
+  border: 0;
+  border-top: var(--line);
+}
+
+/* Givre식 라벨/값 표 (프로필 헤더 등에 재사용) */
+.rf-spec {
+  list-style: none;
+  border-top: var(--line);
+}
+.rf-spec > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+  border-bottom: var(--line);
+}
+.rf-spec__value {
+  font-size: var(--fs-small);
+  color: var(--ink);
+  text-align: right;
+}
+
+/* ── 모션 줄이기 설정한 사람: 애니메이션 끔 ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

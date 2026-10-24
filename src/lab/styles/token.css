@@ -1,0 +1,72 @@
+/* ==========================================================
+   RF-01 / DESIGN TOKENS
+   사이트 전체의 색·글꼴·크기·간격을 여기서만 정의한다.
+   ========================================================== */
+
+:root {
+  /* ── 색: 예온 (Cold Green) ─ 모든 텍스트·선·커서의 기준색 ── */
+  --ink-rgb: 31, 77, 63;                     /* #1F4D3F */
+  --ink: rgb(var(--ink-rgb));
+  --ink-80: rgba(var(--ink-rgb), 0.8);
+  --ink-60: rgba(var(--ink-rgb), 0.6);       /* 라벨, 보조 텍스트 */
+  --ink-40: rgba(var(--ink-rgb), 0.4);       /* 흐린 텍스트 */
+  --ink-20: rgba(var(--ink-rgb), 0.2);       /* 구분선 */
+  --ink-10: rgba(var(--ink-rgb), 0.1);       /* 아주 옅은 면 */
+
+  /* ── 색: 이비 (Pale Green) ─ 사이트 전체에서 아주 조금만 ── */
+  --evie-rgb: 140, 214, 176;
+  --evie: #CFE3D4;                           /* 옅은 셀라돈 */
+  --evie-glow: rgba(var(--evie-rgb), 0.35);  /* 커서 주위 빛 (STEP 2) */
+  --platinum: #EDE6D6;                       /* 백금발 미색 */
+
+  /* ── 색: 공간 ── */
+  --paper: #EEF1EE;                          /* 차가운 오프화이트 */
+  --paper-light: #F5F7F4;
+  --paper-deep: #E3E8E4;
+  --alert: #B4483C;                          /* 취소선·이상값에만 */
+
+  /* ── 글꼴 ── */
+  --font-display: 'Archivo', 'Pretendard Variable', sans-serif;
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system,
+    BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --display-stretch: 72%;                    /* 타이틀 폭 (62% ~ 125%) */
+  --display-weight: 500;
+
+  /* ── 글자 크기 (화면 크기에 따라 자동 조절) ── */
+  --fs-display: clamp(3.25rem, 16vw, 15rem); /* RAINFROG_01 */
+  --fs-h1: clamp(2rem, 5vw, 4rem);
+  --fs-lead: clamp(1.25rem, 2.4vw, 2rem);    /* Givre식 큰 문단 */
+  --fs-body: 1rem;
+  --fs-small: 0.8125rem;
+  --fs-label: 0.6875rem;                     /* 11px 라벨 */
+
+  --tracking-display: -0.02em;
+  --tracking-label: 0.18em;
+
+  /* ── 간격 ── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 16px;
+  --sp-4: 24px;
+  --sp-5: 40px;
+  --sp-6: 64px;
+  --sp-7: 96px;
+  --sp-8: 144px;
+  --gutter: clamp(20px, 4vw, 56px);          /* 화면 좌우 여백 */
+
+  /* ── 선 ── */
+  --hair: 1px;
+  --line: var(--hair) solid var(--ink-20);
+
+  /* ── 배경 입자 ── */
+  --noise-opacity: 0.07;                     /* 0.04 ~ 0.12 사이에서 조절 */
+
+  /* ── 모션 ── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);       /* 부드럽게 멈춤 */
+  --ease-precise: cubic-bezier(0.65, 0, 0.35, 1);  /* 측정하듯 정확하게 */
+  --dur-fast: 200ms;
+  --dur-base: 500ms;
+  --dur-slow: 1200ms;
+}

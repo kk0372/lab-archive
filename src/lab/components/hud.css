@@ -1,0 +1,208 @@
+/* ==========================================================
+   RF-01 / HUD FRAME
+   ========================================================== */
+
+:root {
+  --hud-inset: clamp(10px, 1.6vw, 20px); /* 화면 가장자리 ~ 프레임 거리 */
+  --hud-ruler: 8px;                      /* 눈금자 두께 */
+  --hud-text: 0.625rem;                  /* 10px */
+
+  /* 아래쪽 흐림 띠 */
+  --hud-veil-height: 120px;  /* 흐림 띠 전체 높이 */
+  --hud-veil-blur: 10px;     /* 가장 아래쪽 흐림 세기 */
+  --hud-veil-alpha: 0.15;    /* 종이색이 덮이는 정도 (0.1 ~ 0.2) */
+}
+
+.rf-hud {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;          /* 내용 위, 이비의 빛(9000)·커서(9500) 아래 */
+  pointer-events: none;
+}
+
+/* ── 아래쪽 흐림 띠: 아래로 갈수록 흐리고, 위로 갈수록 또렷해짐 ── */
+.rf-hud::before,
+.rf-hud::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;            /* HUD 선·글자보다 아래 → 상태값은 또렷하게 유지 */
+  pointer-events: none;
+}
+
+/* 1층: 넓고 약한 흐림 + 아주 옅은 종이색 */
+.rf-hud::before {
+  height: var(--hud-veil-height);
+  background: linear-gradient(
+    to top,
+    rgba(238, 241, 238, var(--hud-veil-alpha)) 0%,
+    rgba(238, 241, 238, 0) 100%
+  );
+  -webkit-backdrop-filter: blur(calc(var(--hud-veil-blur) * 0.4));
+  backdrop-filter: blur(calc(var(--hud-veil-blur) * 0.4));
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+}
+
+/* 2층: 아래쪽만 좁고 강한 흐림 */
+.rf-hud::after {
+  height: calc(var(--hud-veil-height) * 0.6);
+  -webkit-backdrop-filter: blur(var(--hud-veil-blur));
+  backdrop-filter: blur(var(--hud-veil-blur));
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 45%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 45%, transparent 100%);
+}
+
+/* ── 프레임 ── */
+.rf-hud__frame {
+  position: absolute;
+  inset: var(--hud-inset);
+  border: 1px solid var(--ink-10);
+}
+
+/* ── 모서리 + ── */
+.rf-hud__corner {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+}
+.rf-hud__corner::before,
+.rf-hud__corner::after {
+  content: '';
+  position: absolute;
+  background: var(--ink-60);
+}
+.rf-hud__corner::before {
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: 1px;
+}
+.rf-hud__corner::after {
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 1px;
+}
+.rf-hud__corner--tl { top: calc(var(--hud-inset) - 5px); left: calc(var(--hud-inset) - 5px); }
+.rf-hud__corner--tr { top: calc(var(--hud-inset) - 5px); right: calc(var(--hud-inset) - 5px); }
+.rf-hud__corner--bl { bottom: calc(var(--hud-inset) - 5px); left: calc(var(--hud-inset) - 5px); }
+.rf-hud__corner--br { bottom: calc(var(--hud-inset) - 5px); right: calc(var(--hud-inset) - 5px); }
+
+/* ── 눈금자: 짧은 눈금 10px마다, 긴 눈금 100px마다 ── */
+.rf-hud__ruler {
+  position: absolute;
+  background-repeat: no-repeat;
+}
+
+.rf-hud__ruler--x {
+  top: var(--hud-inset);
+  left: var(--hud-inset);
+  right: var(--hud-inset);
+  height: var(--hud-ruler);
+  background-image:
+    repeating-linear-gradient(to right, var(--ink-40) 0 1px, transparent 1px 100px),
+    repeating-linear-gradient(to right, var(--ink-20) 0 1px, transparent 1px 10px);
+  background-size: 100% var(--hud-ruler), 100% calc(var(--hud-ruler) / 2);
+  background-position: top left, top left;
+}
+
+.rf-hud__ruler--y {
+  top: var(--hud-inset);
+  bottom: var(--hud-inset);
+  left: var(--hud-inset);
+  width: var(--hud-ruler);
+  background-image:
+    repeating-linear-gradient(to bottom, var(--ink-40) 0 1px, transparent 1px 100px),
+    repeating-linear-gradient(to bottom, var(--ink-20) 0 1px, transparent 1px 10px);
+  background-size: var(--hud-ruler) 100%, calc(var(--hud-ruler) / 2) 100%;
+  background-position: top left, top left;
+}
+
+/* ── 커서를 따라가는 눈금자 표시선 ── */
+.rf-hud__marker {
+  position: absolute;
+  background: var(--ink);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out);
+  will-change: transform;
+}
+.rf-hud__marker--x {
+  top: var(--hud-inset);
+  left: 0;
+  width: 1px;
+  height: 14px;
+}
+.rf-hud__marker--y {
+  top: 0;
+  left: var(--hud-inset);
+  width: 14px;
+  height: 1px;
+}
+/* 커서가 화면 안에 있을 때만 보임 (Cursor.jsx가 붙이는 클래스) */
+html.rf-cursor-visible .rf-hud__marker {
+  opacity: 1;
+}
+
+/* ── 상태값 ── */
+.rf-hud__readout {
+  position: absolute;
+  z-index: 1;
+  bottom: calc(var(--hud-inset) + 10px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--hud-text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--ink-60);
+  white-space: nowrap;
+}
+.rf-hud__readout b {
+  font-weight: 400;
+  color: var(--ink);
+  transition: color 150ms linear;
+}
+.rf-hud__readout--bl {
+  left: calc(var(--hud-inset) + var(--hud-ruler) + 12px);
+}
+.rf-hud__readout--bc {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.rf-hud__readout--br {
+  right: calc(var(--hud-inset) + 12px);
+  text-align: right;
+  align-items: flex-end;
+}
+
+/* 이상값: 유일하게 빨간색이 쓰이는 순간 */
+.rf-hud__readout b.is-anomaly {
+  color: var(--alert);
+}
+
+/* ── 터치 기기: 표시선 없음 ── */
+@media (hover: none), (pointer: coarse) {
+  .rf-hud__marker {
+    display: none;
+  }
+}
+
+/* ── 좁은 화면: 가운데 온도·왼쪽 눈금자 숨김 ── */
+@media (max-width: 600px) {
+  :root {
+    --hud-veil-height: 110px;
+  }
+  .rf-hud__readout--bc,
+  .rf-hud__ruler--y {
+    display: none;
+  }
+  .rf-hud__readout--bl {
+    left: calc(var(--hud-inset) + 10px);
+  }
+}
