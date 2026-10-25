@@ -1,10 +1,10 @@
-import '/Users/pin0117/lab-archive/src/lab/styles/token.css'
-import '/Users/pin0117/lab-archive/src/lab/styles/global.css'
-import Intro from '/Users/pin0117/lab-archive/src/lab/components/Intro.jsx'
-import Cursor from '/Users/pin0117/lab-archive/src/lab/components/Cursor.jsx'
-import HudFrame from '/Users/pin0117/lab-archive/src/lab/components/HudFrame.jsx'
-import HeroTitle from '/Users/pin0117/lab-archive/src/lab/components/HeroTitle.jsx'
-import ArchiveIntro from '/Users/pin0117/lab-archive/src/lab/components/ArchiveIntro.jsx'
+import './styles/tokens.css'
+import './styles/global.css'
+import Intro from './components/Intro.jsx'
+import Cursor from './components/Cursor.jsx'
+import HudFrame from './components/HudFrame.jsx'
+import HeroTitle from './components/HeroTitle.jsx'
+import ArchiveIntro from './components/ArchiveIntro.jsx'
 
 const LINKS = [
   '01. Subject — 서예온',
