@@ -203,6 +203,9 @@ html.rf-cursor-visible .rf-hud__marker {
     display: none;
   }
   .rf-hud__readout--bl {
-    left: calc(var(--hud-inset) + 10px);
+    left: calc(var(--hud-inset) + 18px);
+  }
+  .rf-hud__readout--br {
+    right: calc(var(--hud-inset) + 18px);
   }
 }

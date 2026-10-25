@@ -287,6 +287,10 @@ html.rf-menu-open .rf-menubar::before {
 
 /* ── 좁은 화면 ── */
 @media (max-width: 600px) {
+  .rf-menubar {
+    left: calc(var(--hud-inset) + 18px);
+    right: calc(var(--hud-inset) + 18px);
+  }
   .rf-menubar__here {
     display: none;
   }

@@ -14,6 +14,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  scrollbar-gutter: stable;   /* 추가: 스크롤바가 사라져도 그 자리를 비워둠 */
 }
 
 body {
