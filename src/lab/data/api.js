@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import * as client from '../../supabaseClient.js'
+import { supabase } from '../../supabase.js'
 
-/* 기존 supabaseClient.js가 어떤 방식으로 내보내든 받아옴 */
-export const supabase = client.supabase ?? client.default
+export { supabase }
 
 const BUCKET = 'images'
 const CODE_KEY = 'rf-access-code'
