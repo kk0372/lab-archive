@@ -1,10 +1,11 @@
 import { PAGES, TLink } from './Layout.jsx'
+import { useCounts, countLabel } from './data/api.js'
 import Intro from './components/Intro.jsx'
 import HeroTitle from './components/HeroTitle.jsx'
 import ArchiveIntro from './components/ArchiveIntro.jsx'
 
 const s = {
-  temp: { padding: '0 var(--gutter) var(--sp-8)' },
+  wrap: { padding: '0 var(--gutter) var(--sp-8)' },
   head: {
     display: 'flex',
     alignItems: 'center',
@@ -17,16 +18,20 @@ const s = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'baseline',
+    gap: 'var(--sp-3)',
     paddingBlock: 'var(--sp-4)',
     borderBottom: 'var(--line)',
-    fontSize: 'clamp(1.125rem, 1.6vw, 1.5rem)', /* 18px ~ 24px (작게) */
-    fontWeight: 500,                            /* 400 → 500 (단단하게) */
+    fontSize: 'clamp(1.125rem, 1.6vw, 1.5rem)',
+    fontWeight: 500,
     letterSpacing: '-0.015em',
     lineHeight: 1.3,
   },
+  meta: { whiteSpace: 'nowrap' },
 }
 
 export default function LabPreview() {
+  const counts = useCounts()
+
   return (
     <>
       <Intro />
@@ -35,10 +40,9 @@ export default function LabPreview() {
         <HeroTitle />
         <ArchiveIntro />
 
-        {/* ── 임시: 0-C/0-D에서 진짜 인덱스로 교체 ── */}
-        <section style={s.temp}>
+        <section style={s.wrap} aria-labelledby="rf-index-title">
           <div style={s.head}>
-            <span className="rf-label">(Temp) Index</span>
+            <h2 id="rf-index-title" className="rf-label">(Index)</h2>
             <span style={s.headLine} />
           </div>
           <ul style={s.list}>
@@ -46,7 +50,9 @@ export default function LabPreview() {
               <li key={p.path}>
                 <TLink to={p.path} style={s.item}>
                   <span>{p.no}. {p.title}</span>
-                  <span className="rf-label rf-mono">{p.no} →</span>
+                  <span className="rf-label rf-mono" style={s.meta}>
+                    {countLabel(p.section, counts)} →
+                  </span>
                 </TLink>
               </li>
             ))}

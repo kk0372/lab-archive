@@ -12,9 +12,9 @@ export const PAGES = [
   { no: '01', path: '/subject/01', title: 'Subject — 서예온', note: 'Profile' },
   { no: '02', path: '/subject/02', title: 'Subject — 이비', note: 'Observation' },
   { no: '03', path: '/interaction', title: 'Interaction', note: 'Timeline' },
-  { no: '04', path: '/chronicles', title: 'Chronicles', note: 'Stories' },
-  { no: '05', path: '/visual', title: 'Visual data', note: 'Commissions' },
-  { no: '06', path: '/logs', title: 'Research logs', note: 'Notes' },
+  { no: '04', path: '/chronicles', title: 'Chronicles', note: 'Stories', section: 'chronicles' },
+  { no: '05', path: '/visual', title: 'Visual data', note: 'Commissions', section: 'visual' },
+  { no: '06', path: '/logs', title: 'Research logs', note: 'Notes', section: 'logs' },
 ]
 
 const COVER_MS = 420   // 막이 덮는 시간 (layout.css의 rf-transit-in과 같게)

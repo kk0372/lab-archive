@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import './menu.css'
+import { useCounts, countLabel } from '../data/api.js'
 
 const CLOSE_MS = 450 // 닫히는 시간 (menu.css의 rf-menu-out과 같게)
 
 export default function Menu({ pages, go, current, label }) {
   const [state, setState] = useState('closed') // closed | open | closing
+  const counts = useCounts()
   const btnRef = useRef(null)
   const firstRef = useRef(null)
   const closeTimer = useRef(0)
@@ -131,7 +133,7 @@ export default function Menu({ pages, go, current, label }) {
                       <span className="rf-menu__no">{p.no}</span>
                       <span className="rf-menu__title">{p.title}</span>
                       <span className="rf-menu__note">({p.note})</span>
-                      <span className="rf-menu__count">{here ? 'Current' : '—'}</span>
+                      <span className="rf-menu__count">{countLabel(p.section, counts)}</span>
                       <span className="rf-menu__arrow" aria-hidden="true">→</span>
                     </a>
                   </li>
