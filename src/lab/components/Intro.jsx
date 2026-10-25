@@ -6,7 +6,7 @@ import './intro.css'
    PACE: 전체 속도 배율 (1 = 원래 속도, 클수록 느림)
    HOLD: 100%에 도달한 뒤 걷히기 전까지 멈추는 시간 (ms)
    ────────────────────────────────────────────── */
-const PACE = 1.3
+const PACE = 1.2
 const HOLD = 200
 
 const ms = (v) => v * PACE
