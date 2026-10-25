@@ -3,6 +3,7 @@ import './styles/tokens.css'
 import './styles/global.css'
 import Layout, { PAGES, TLink } from './Layout.jsx'
 import LabPreview from './LabPreview.jsx'
+import Admin from './pages/Admin.jsx'
 
 const ph = {
   main: {
@@ -41,10 +42,7 @@ export default function AppRoutes() {
         {PAGES.map((p) => (
           <Route key={p.path} path={p.path} element={<Placeholder {...p} />} />
         ))}
-        <Route
-          path="/admin"
-          element={<Placeholder no="00" title="Admin" note="Restricted" />}
-        />
+        <Route path="/admin" element={<Admin />} />
         <Route
           path="*"
           element={<Placeholder no="404" title="No record" note="Not found" />}
