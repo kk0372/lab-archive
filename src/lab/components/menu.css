@@ -44,7 +44,7 @@ html.rf-menu-open body {
   top: 0;
   left: 0;
   right: 0;
-  height: calc(var(--bar-top) + 40px);
+  height: calc(var(--bar-top) + 44px);
   z-index: -1;
   pointer-events: none;
   background: linear-gradient(
