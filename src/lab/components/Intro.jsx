@@ -65,6 +65,7 @@ function decide() {
 }
 
 const RUN = decide()
+let playedThisLoad = false   // 한 번 재생하면, 페이지를 이동했다 돌아와도 다시 안 나옴
 
 /* 매번 달라지는 것: 방울 위치·크기, 번지는 모양 */
 const VARY = {
@@ -85,7 +86,8 @@ function readObs() {
 }
 
 export default function Intro() {
-  const [phase, setPhase] = useState(RUN.play ? 'play' : 'done')
+  const [phase, setPhase] = useState(() => (RUN.play && !playedThisLoad ? 'play' : 'done'))
+  const playing = useRef(phase === 'play').current
   const rootRef = useRef(null)
   const pctRef = useRef(null)
   const volRef = useRef(null)
@@ -94,7 +96,7 @@ export default function Intro() {
 
   /* 인트로 동안: 스크롤 잠금 + 히어로 애니메이션 일시정지 */
   useLayoutEffect(() => {
-    if (!RUN.play) return
+    if (!playing) return
     const html = document.documentElement
     html.classList.add('rf-intro-active')
     window.scrollTo(0, 0)
@@ -102,7 +104,7 @@ export default function Intro() {
   }, [])
 
   useEffect(() => {
-    if (!RUN.play) return
+    if (!playing) return
     let disposed = false
     let exiting = false
     let raf = 0
@@ -168,6 +170,7 @@ export default function Intro() {
     const exit = () => {
       if (exiting || disposed) return
       exiting = true
+      playedThisLoad = true   // ← 추가
       timers.forEach(clearTimeout)
       cancelAnimationFrame(raf)
       rootRef.current?.classList.remove('is-frog')
