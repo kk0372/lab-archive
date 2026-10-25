@@ -28,6 +28,7 @@ export default function FocusText({ text, as: Tag = 'p', className = '', style }
 
     const coarse = window.matchMedia('(pointer: coarse)').matches
     const maxBlur = coarse ? CONFIG.maxBlurMobile : CONFIG.maxBlur
+    const focusAt = coarse ? 0.8 : CONFIG.focusAt   // ← 이 줄 추가
 
     let lines = []
     let raf = 0
@@ -48,7 +49,7 @@ export default function FocusText({ text, as: Tag = 'p', className = '', style }
       raf = 0
       const vh = window.innerHeight
       const base = el.getBoundingClientRect().top
-      const focusY = vh * CONFIG.focusAt
+      const focusY = vh * focusAt
       const range = vh * CONFIG.range
 
       for (const line of lines) {
