@@ -8,6 +8,8 @@
   min-height: 100svh;
   display: grid;
   grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr);  /* 추가: 칸 폭을 화면 폭에 고정 */
+  overflow-x: clip;                        /* 추가: 혹시 넘쳐도 가로로 삐져나가지 않게 */
   /* 위: HUD 눈금자 아래부터 / 아래: HUD 흐림 띠 위까지 */
   padding:
     calc(var(--hud-inset) + var(--hud-ruler) + var(--sp-4))
@@ -182,6 +184,11 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 칸 안의 내용이 칸을 밀어서 넓히지 못하게 */
+.rf-hero > * {
+  min-width: 0;
 }
 
 /* ── 좁은 화면 ── */

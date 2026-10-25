@@ -49,9 +49,16 @@ export default function HeroTitle() {
       start()
     }
 
+    // 폰에서 글꼴이 늦게 불러와지면 그때 한 번 더 폭을 맞춤
+    const onFontsLoaded = () => {
+      if (!cancelled) fit()
+    }
+    document.fonts?.addEventListener?.('loadingdone', onFontsLoaded)
+
     return () => {
       cancelled = true
       ro.disconnect()
+      document.fonts?.removeEventListener?.('loadingdone', onFontsLoaded)
     }
   }, [])
 

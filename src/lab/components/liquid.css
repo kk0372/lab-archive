@@ -98,8 +98,11 @@
   .rf-specimen {
     left: auto;
     right: var(--gutter);
-    top: 30%;
-    width: 44vw;
-    height: 36%;
+    top: 40%;
+    width: 42vw;
+    height: 34%;
+  }
+  .rf-specimen__readout {
+    display: none;
   }
 }
