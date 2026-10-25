@@ -1,7 +1,19 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../../supabase.js'
+import * as client from '../../supabase.js'
 
-export { supabase }
+/* supabase.js가 어떤 이름으로 내보내든 Supabase 연결을 찾아옴 */
+export const supabase =
+  client.supabase ??
+  client.default ??
+  Object.values(client).find(
+    (v) => v && typeof v.rpc === 'function' && typeof v.from === 'function',
+  )
+
+if (!supabase) {
+  console.error(
+    '[RF-01] src/supabase.js에서 Supabase 연결을 찾지 못함. createClient 줄 앞에 export가 있는지 확인.',
+  )
+}
 
 const BUCKET = 'images'
 const CODE_KEY = 'rf-access-code'
