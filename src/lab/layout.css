@@ -1,0 +1,74 @@
+/* ==========================================================
+   RF-01 / LAYOUT — 페이지 전환
+   ========================================================== */
+
+.rf-transit {
+  position: fixed;
+  inset: 0;
+  z-index: 8600;   /* HUD(8000)·인트로(8500) 위, 빛(9000)·커서(9500) 아래 */
+  background: radial-gradient(
+    120% 80% at 50% 0%,
+    var(--paper-light) 0%,
+    var(--paper) 55%,
+    var(--paper-deep) 100%
+  );
+}
+
+/* 덮기: 아래에서 위로 차오름 */
+.rf-transit.is-cover {
+  pointer-events: auto;   /* 덮는 동안 다른 클릭 막기 */
+  animation: rf-transit-in 420ms var(--ease-precise) forwards;
+}
+
+/* 걷기: 계속 위쪽으로 지나감 */
+.rf-transit.is-reveal {
+  pointer-events: none;
+  animation: rf-transit-out 520ms var(--ease-precise) forwards;
+}
+
+@keyframes rf-transit-in {
+  from { clip-path: inset(100% 0 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes rf-transit-out {
+  from { clip-path: inset(0 0 0 0); }
+  to   { clip-path: inset(0 0 100% 0); }
+}
+
+/* 가운데 선: 덮는 동안 왼쪽에서 오른쪽으로 그어짐 */
+.rf-transit__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--ink-40);
+  transform-origin: left center;
+}
+.rf-transit.is-cover .rf-transit__line {
+  transform: scaleX(0);
+  animation: rf-transit-line 420ms var(--ease-precise) 80ms forwards;
+}
+@keyframes rf-transit-line {
+  to { transform: scaleX(1); }
+}
+
+/* 목적지 라벨 */
+.rf-transit__label {
+  position: absolute;
+  left: var(--gutter);
+  bottom: calc(50% + var(--sp-3));
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-60);
+  white-space: nowrap;
+}
+.rf-transit__label b {
+  font-weight: 400;
+  color: var(--ink);
+}
