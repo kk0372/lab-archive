@@ -4,7 +4,7 @@
 
 :root {
   --glow-size: clamp(320px, 38vw, 640px); /* 빛의 크기 */
-  --glow-alpha: 0.2;                      /* 빛의 진하기 (0.3 ~ 0.7) */
+  --glow-alpha: 0.15;                      /* 빛의 진하기 (0.3 ~ 0.7) */
   --ring-size: 44px;
   --ring-size-hover: 76px;
   --ring-size-down: 34px;
