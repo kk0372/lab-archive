@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import HudFrame from './components/HudFrame.jsx'
 import Cursor from './components/Cursor.jsx'
+import Menu from './components/Menu.jsx'
 import './layout.css'
 
 /* ──────────────────────────────────────────────
@@ -35,7 +36,6 @@ export function TLink({ to, onClick, children, ...rest }) {
   const handle = (e) => {
     onClick?.(e)
     if (e.defaultPrevented) return
-    // Cmd/Ctrl/Shift 클릭, 가운데 버튼 클릭은 브라우저 기본 동작 (새 탭 등)
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     e.preventDefault()
     go(to)
@@ -53,7 +53,7 @@ export default function Layout() {
 
   const [phase, setPhase] = useState('idle') // idle | cover | reveal
   const [label, setLabel] = useState('')
-  const [seq, setSeq] = useState(0)          // 연출을 매번 처음부터 다시 재생하기 위한 번호
+  const [seq, setSeq] = useState(0)
 
   const pathRef = useRef(location.pathname)
   const prevPath = useRef(location.pathname)
@@ -111,6 +111,12 @@ export default function Layout() {
     <TransitionContext.Provider value={go}>
       <HudFrame />
       <Cursor />
+      <Menu
+        pages={PAGES}
+        go={go}
+        current={location.pathname}
+        label={labelFor(location.pathname)}
+      />
 
       <Outlet />
 

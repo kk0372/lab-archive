@@ -10,7 +10,7 @@ const ph = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    paddingTop: 'calc(var(--hud-inset) + var(--hud-ruler) + var(--sp-4))',
+    paddingTop: 'calc(var(--hud-inset) + var(--hud-ruler) + var(--sp-4) + 40px)',
     paddingBottom: 'calc(var(--hud-veil-height) + var(--sp-2))',
   },
   top: { display: 'flex', justifyContent: 'space-between', gap: 'var(--sp-3)' },

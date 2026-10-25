@@ -1,0 +1,302 @@
+/* ==========================================================
+   RF-01 / MENU
+   ========================================================== */
+
+:root {
+  /* 히어로 상단 라벨과 정확히 같은 높이 */
+  --bar-top: calc(var(--hud-inset) + var(--hud-ruler) + var(--sp-4));
+}
+
+/* 메뉴 바가 히어로 상단 라벨 자리를 대신함 (공간은 그대로 유지) */
+.rf-hero__top {
+  visibility: hidden;
+}
+
+html.rf-menu-open,
+html.rf-menu-open body {
+  overflow: hidden;
+}
+
+/* ── 위쪽 바 ── */
+.rf-menubar {
+  position: fixed;
+  top: var(--bar-top);
+  left: var(--gutter);
+  right: var(--gutter);
+  z-index: 7990;   /* 메뉴(7950) 위, HUD(8000) 아래 → 눈금자는 항상 또렷 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--ink-60);
+  white-space: nowrap;
+}
+
+/* 스크롤하면 나타나는 위쪽 흐림 띠 */
+.rf-menubar::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--bar-top) + 48px);
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(238, 241, 238, 0.35),
+    rgba(238, 241, 238, 0)
+  );
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out);
+}
+html.rf-scrolled .rf-menubar::before {
+  opacity: 1;
+}
+html.rf-menu-open .rf-menubar::before {
+  opacity: 0;
+}
+
+.rf-menubar__home {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+.rf-menubar__home b {
+  font-weight: 400;
+  color: var(--ink);
+}
+.rf-menubar__here {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rf-menubar__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.rf-menubar__word {
+  min-width: 5.2ch;     /* INDEX ↔ CLOSE 바뀔 때 폭 고정 */
+  text-align: right;
+}
+.rf-menubar__count {
+  color: var(--ink-60);
+}
+
+/* + → × */
+.rf-menubar__icon {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  transition: transform 450ms var(--ease-out);
+}
+.rf-menubar__icon::before,
+.rf-menubar__icon::after {
+  content: '';
+  position: absolute;
+  background: var(--ink);
+}
+.rf-menubar__icon::before { left: 0; right: 0; top: 5px; height: 1px; }
+.rf-menubar__icon::after  { top: 0; bottom: 0; left: 5px; width: 1px; }
+.rf-menubar__toggle[aria-expanded='true'] .rf-menubar__icon {
+  transform: rotate(45deg);
+}
+
+/* ── 전체화면 인덱스 ── */
+.rf-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 7950;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: radial-gradient(
+    120% 80% at 50% 0%,
+    var(--paper-light) 0%,
+    var(--paper) 55%,
+    var(--paper-deep) 100%
+  );
+}
+
+/* 열기: 위에서 아래로 내려옴 / 닫기: 위로 걷힘 */
+.rf-menu.is-open {
+  animation: rf-menu-in 600ms var(--ease-precise) forwards;
+}
+.rf-menu.is-closing {
+  pointer-events: none;
+  animation: rf-menu-out 450ms var(--ease-precise) forwards;
+}
+@keyframes rf-menu-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes rf-menu-out {
+  from { clip-path: inset(0 0 0 0); }
+  to   { clip-path: inset(0 0 100% 0); }
+}
+
+.rf-menu__inner {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  padding:
+    calc(var(--bar-top) + var(--sp-7))
+    var(--gutter)
+    calc(var(--hud-veil-height) + var(--sp-2));
+}
+
+.rf-menu__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+.rf-menu__headline {
+  flex: 1;
+  border-top: var(--line);
+}
+
+/* 목록 */
+.rf-menu__list {
+  list-style: none;
+  border-top: var(--line);
+}
+
+/* 줄들이 위에서부터 차례로 떠오름 */
+.rf-menu__row {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.rf-menu.is-open .rf-menu__row {
+  animation: rf-menu-row 600ms var(--ease-out) calc(220ms + var(--i) * 50ms) forwards;
+}
+.rf-menu.is-closing .rf-menu__row {
+  opacity: 1;
+  transform: none;
+}
+@keyframes rf-menu-row {
+  to { opacity: 1; transform: none; }
+}
+
+.rf-menu__item {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr) 10rem 6rem 1.5rem;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding-block: var(--sp-4);
+  border-bottom: var(--line);
+  transition: opacity 300ms var(--ease-out);
+}
+
+.rf-menu__no,
+.rf-menu__note,
+.rf-menu__count {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-60);
+}
+.rf-menu__count {
+  text-align: right;
+}
+
+.rf-menu__title {
+  font-size: clamp(1.375rem, 2.6vw, 2.25rem);  /* 22px ~ 36px */
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.rf-menu__arrow {
+  font-family: var(--font-mono);
+  text-align: right;
+  color: var(--ink-40);
+  transform: translateX(-6px);
+  transition:
+    transform 400ms var(--ease-out),
+    color 400ms var(--ease-out);
+}
+.rf-menu__item:hover .rf-menu__arrow,
+.rf-menu__item:focus-visible .rf-menu__arrow {
+  transform: none;
+  color: var(--ink);
+}
+
+/* 한 줄에 올리면 나머지가 흐려짐 (마우스 기기만) */
+@media (hover: hover) {
+  .rf-menu__list:hover .rf-menu__item:not(:hover) {
+    opacity: 0.35;
+  }
+}
+
+/* 지금 있는 페이지: ■ 표시 */
+.rf-menu__item.is-here .rf-menu__no::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  vertical-align: middle;
+  background: var(--ink);
+}
+.rf-menu__item.is-here .rf-menu__count {
+  color: var(--ink);
+}
+
+/* 아래 줄 */
+.rf-menu__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.rf-menu__admin {
+  transition: color var(--dur-fast) linear;
+}
+.rf-menu__admin:hover {
+  color: var(--ink);
+}
+
+/* ── 중간 화면: (PROFILE) 같은 설명 숨김 ── */
+@media (max-width: 900px) {
+  .rf-menu__item {
+    grid-template-columns: 3rem minmax(0, 1fr) auto 1.5rem;
+  }
+  .rf-menu__note {
+    display: none;
+  }
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 600px) {
+  .rf-menubar__here {
+    display: none;
+  }
+  .rf-menu__inner {
+    padding-top: calc(var(--bar-top) + var(--sp-6));
+  }
+  .rf-menu__item {
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  }
+  .rf-menu__arrow {
+    display: none;
+  }
+}
