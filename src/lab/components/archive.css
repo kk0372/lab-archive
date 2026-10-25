@@ -108,6 +108,6 @@
     grid-column: 1 / -1;
   }
   .rf-archive__grid {
-    padding-inline: clamp(16px, 6vw, 40px);  /* 폰에서도 좌우 안쪽 여백 */
+    padding-inline: clamp(12px, 4vw, 32px);  /* 폰에서도 좌우 안쪽 여백 */
   }
 }
