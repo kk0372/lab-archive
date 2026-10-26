@@ -208,4 +208,16 @@ html.rf-cursor-visible .rf-hud__marker {
   .rf-hud__readout--br {
     right: calc(var(--hud-inset) + 18px);
   }
+  .rf-hud::before,
+  .rf-hud::after {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .rf-hud::before {
+    background: linear-gradient(
+      to top,
+      rgba(238, 241, 238, 0.85) 0%,
+      rgba(238, 241, 238, 0) 100%
+    );
+  }
 }
