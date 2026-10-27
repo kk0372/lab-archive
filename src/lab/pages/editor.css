@@ -1,0 +1,247 @@
+/* ==========================================================
+   RF-01 / EDITOR (글쓰기·수정)
+   ========================================================== */
+
+.rf-edit__state {
+  margin-left: auto;
+}
+.rf-edit__state.is-dirty {
+  color: var(--ink);
+}
+.rf-recs__back.is-warn,
+.rf-btn--ghost.is-warn {
+  color: var(--alert);
+}
+.rf-btn--ghost.is-warn {
+  border-color: rgba(180, 72, 60, 0.45);
+}
+
+/* ── 배치: 정보 왼쪽(고정), 입력 오른쪽 ── */
+.rf-edit__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-6);
+  margin-top: var(--sp-5);
+  padding-inline: clamp(0px, 4vw, 64px);
+}
+.rf-edit__side {
+  grid-column: 1 / span 4;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--bar-top) + 56px);
+}
+.rf-edit__main {
+  grid-column: 6 / span 7;
+  max-width: 46rem;
+}
+
+/* fieldset 기본 테두리 제거 */
+.rf-edit__group {
+  border: 0;
+  min-inline-size: 0;
+  margin-bottom: var(--sp-5);
+}
+
+.rf-edit__hint {
+  margin-top: var(--sp-2);
+  color: var(--ink-40);
+}
+
+/* ── 로그 도장 미리보기 ── */
+.rf-edit__day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
+}
+.rf-edit__day b {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  font-stretch: var(--display-stretch);
+  font-weight: var(--display-weight);
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+/* ── 등급 선택 ── */
+.rf-seg {
+  display: inline-flex;
+  border: 1px solid var(--ink-20);
+}
+.rf-seg__opt {
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-60);
+  transition:
+    background-color 250ms var(--ease-out),
+    color 250ms var(--ease-out);
+}
+.rf-seg__opt + .rf-seg__opt {
+  border-left: 1px solid var(--ink-20);
+}
+.rf-seg__opt:not(.is-on):hover {
+  color: var(--ink);
+}
+.rf-seg__opt.is-on {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+
+/* ── 입력칸 ── */
+.rf-edit__title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.rf-edit__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 11rem;
+  gap: var(--sp-4);
+}
+
+/* 날짜 입력칸 (아이폰에서 비어 있을 때 높이가 줄어드는 것 방지) */
+.rf-field__input[type='date'],
+.rf-field__input[type='datetime-local'] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 44px;
+}
+.rf-field__input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+/* ── 등장인물 칩 ── */
+.rf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.rf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--ink-20);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink-40);
+  transition:
+    border-color 250ms var(--ease-out),
+    color 250ms var(--ease-out);
+}
+.rf-chip i {
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+  opacity: 0.3;
+  transition: opacity 250ms var(--ease-out);
+}
+.rf-chip--evie i {
+  background: var(--evie);
+  box-shadow: inset 0 0 0 1px var(--ink-20);
+}
+.rf-chip:hover {
+  color: var(--ink-60);
+}
+.rf-chip.is-on {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.rf-chip.is-on i {
+  opacity: 1;
+}
+
+/* ── 본문 ── */
+.rf-edit__body {
+  display: block;
+  width: 100%;
+  margin-top: var(--sp-2);
+  padding: 14px 0;
+  overflow: hidden;
+  resize: none;
+  border: 0;
+  border-top: var(--line);
+  border-bottom: 1px solid var(--ink-20);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 300ms var(--ease-out);
+}
+.rf-edit__body:focus {
+  border-bottom-color: var(--ink);
+}
+.rf-edit__body::placeholder {
+  color: var(--ink-20);
+}
+.rf-edit__count {
+  display: block;
+  margin-top: var(--sp-2);
+  text-align: right;
+  color: var(--ink-40);
+}
+
+/* ── 이미지 자리 ── */
+.rf-edit__slot {
+  display: grid;
+  place-items: center;
+  min-height: 140px;
+  margin-top: var(--sp-2);
+  padding: var(--sp-4);
+  border: 1px dashed var(--ink-20);
+  text-align: center;
+  color: var(--ink-40);
+}
+
+/* ── 저장·취소 ── */
+.rf-edit__actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+}
+.rf-edit__actions .rf-btn {
+  margin-top: 0;
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 900px) {
+  .rf-edit__grid {
+    padding-inline: clamp(16px, 6vw, 40px);
+  }
+  .rf-edit__side,
+  .rf-edit__main {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+  .rf-edit__side {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .rf-edit__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .rf-edit__actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rf-recs__bar .rf-edit__state {
+    margin-left: 0;
+  }
+}

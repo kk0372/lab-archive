@@ -162,3 +162,67 @@ export async function deletePost(post) {
   notifyPostsChanged()
   return removed
 }
+
+/* ==========================================================
+   글쓰기·수정 (1-B-2)
+   ========================================================== */
+
+/* DAY 001 = 이비가 귀국한 날 (= 보호 시작).
+   날짜가 정해지면 'YYYY-MM-DD' 형식으로 넣어. 예: '2024-11-08' */
+export const DAY_ONE = null
+
+export function dayNumber(iso) {
+  if (!DAY_ONE || !iso) return null
+  const [y, m, d] = DAY_ONE.split('-').map(Number)
+  const t = new Date(iso)
+  const a = Date.UTC(y, m - 1, d)
+  const b = Date.UTC(t.getFullYear(), t.getMonth(), t.getDate())
+  return Math.floor((b - a) / 86400000) + 1
+}
+
+/* DAY 047 / 14:32 */
+export function dayLabel(iso) {
+  const t = iso ? new Date(iso) : null
+  const time = t ? `${pad2(t.getHours())}:${pad2(t.getMinutes())}` : '--:--'
+  const n = dayNumber(iso)
+  if (n == null) return `DAY ??? / ${time}`
+  if (n < 1) return `PRE-OBS. / ${time}`   // 귀국 전 기록
+  return `DAY ${String(n).padStart(3, '0')} / ${time}`
+}
+
+const EDITABLE = [
+  'title', 'body', 'subjects', 'artist', 'artist_url',
+  'drawn_on', 'observed_at', 'access',
+]
+
+/* 글 하나 (로그인한 나: CLASSIFIED 포함) */
+export async function fetchPost(id) {
+  const { data, error } = await supabase.from('posts').select('*').eq('id', id).maybeSingle()
+  if (error) throw error
+  return data
+}
+
+/* 저장: id가 없으면 새 글, 있으면 수정. images는 여기서 건드리지 않음 */
+export async function savePost(id, section, fields) {
+  const payload = { section }
+  for (const k of EDITABLE) if (k in fields) payload[k] = fields[k]
+
+  const q = id
+    ? supabase.from('posts').update(payload).eq('id', id)
+    : supabase.from('posts').insert(payload)
+  const { data, error } = await q.select().single()
+  if (error) throw error
+
+  notifyPostsChanged()
+  return data
+}
+
+/* 저장 후 목록 화면에 잠깐 띄울 알림 */
+let flash = null
+export function setFlash(section, text) {
+  flash = { section, text, at: Date.now() }
+}
+export function readFlash(section) {
+  if (!flash || flash.section !== section || Date.now() - flash.at > 4000) return null
+  return { text: flash.text, alert: false }
+}

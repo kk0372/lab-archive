@@ -418,3 +418,23 @@
     grid-column: 1 / -1;   /* 버튼은 아랫줄 오른쪽으로 */
   }
 }
+
+/* ── 1-B-2: 목록의 NEW ENTRY / EDIT ── */
+.rf-recs__new {
+  padding: 6px 10px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  transition:
+    background-color 250ms var(--ease-out),
+    color 250ms var(--ease-out);
+}
+.rf-recs__new:hover {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+.rf-rec__edit {
+  transition: color var(--dur-fast) linear;
+}
+.rf-rec__edit:hover {
+  color: var(--ink);
+}

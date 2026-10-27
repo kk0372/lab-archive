@@ -10,6 +10,7 @@ import {
   pad2,
   pad4,
   fmtDateTime,
+  readFlash,
 } from '../data/api.js'
 import { useAuth } from '../data/auth.js'
 import './admin.css'
@@ -58,7 +59,7 @@ export default function AdminList() {
     setPosts(null)
     setLoadError(false)
     setConfirmId(null)
-    setNotice(null)
+    setNotice(readFlash(section))
     fetchPosts(section)
       .then((rows) => {
         if (alive) setPosts(rows)
@@ -143,7 +144,9 @@ export default function AdminList() {
           Entries {posts ? pad2(posts.length) : '··'} · Classified{' '}
           {posts ? pad2(classified) : '··'}
         </span>
-        <span className="rf-label rf-admin__pending">New entry (1-B-2)</span>
+        <TLink to={`/admin/${section}/new`} className="rf-label rf-recs__new">
+          + New entry
+        </TLink>
       </div>
 
       {owner === false && (
@@ -198,7 +201,9 @@ export default function AdminList() {
                     {fmtDateTime(p.created_at)}
                   </span>
                   <span className="rf-rec__actions">
-                    <span className="rf-label rf-admin__pending">Edit</span>
+                    <TLink to={`/admin/${section}/${p.id}`} className="rf-label rf-rec__edit">
+                      Edit
+                    </TLink>
                     <button
                       type="button"
                       className="rf-label rf-rec__del"

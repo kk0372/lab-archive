@@ -40,6 +40,10 @@ export function TLink({ to, onClick, children, ...rest }) {
     e.preventDefault()
     go(to)
   }
+  /* 코드에서 전환 연출과 함께 이동할 때 (예: 저장 후 목록으로) */
+export function useGo() {
+  return useContext(TransitionContext)
+}
   return (
     <a href={to} onClick={handle} {...rest}>
       {children}
