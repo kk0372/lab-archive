@@ -5,6 +5,7 @@ import {
   SECTIONS,
   fetchPost,
   savePost,
+  commitPost,
   setFlash,
   pad2,
   pad4,
@@ -13,6 +14,7 @@ import {
   DAY_ONE,
 } from '../data/api.js'
 import { useAuth } from '../data/auth.js'
+import ImageField from '../components/ImageField.jsx'
 import './admin.css'
 import './editor.css'
 
@@ -60,6 +62,9 @@ function fromPost(p) {
   }
 }
 
+/* 저장된 이미지 경로 → 이미지 칸 항목 */
+const toItems = (paths) => (paths ?? []).map((path) => ({ key: path, kind: 'stored', path }))
+
 /* 화면 입력값 → DB에 보낼 값 (구역에 해당하는 칸만) */
 function toFields(form, section) {
   const f = {
@@ -79,11 +84,12 @@ function toFields(form, section) {
   return f
 }
 
-function validate(form, section) {
+function validate(form, section, imageCount) {
   const s = SPEC[section]
   if (s.titleRequired && !form.title.trim()) return 'Title required.'
   if (section === 'logs' && !form.observed_at) return 'Observation time required.'
   if (s.bodyRequired && !form.body.trim()) return `${s.body} required.`
+  if (section === 'visual' && imageCount === 0) return 'At least one image required.'
   return null
 }
 
@@ -113,23 +119,30 @@ export default function AdminEditor() {
   const page = PAGES.find((p) => p.section === section)
   const spec = SPEC[section]
   const listPath = `/admin/${section}`
+  const hasImages = section === 'visual'
 
   const go = useGo()
   const { loading, user, owner } = useAuth()
   const userId = user?.id ?? null
 
-  const [form, setForm] = useState(null)     // null = 불러오는 중
+  const [form, setForm] = useState(null)       // null = 불러오는 중
   const [savedJson, setSavedJson] = useState('')
-  const [meta, setMeta] = useState(null)     // 저장된 글 정보 (번호, 날짜, 이미지)
+  const [items, setItems] = useState([])       // 이미지 칸 (화면 순서 = 저장 순서)
+  const [savedImages, setSavedImages] = useState([])
+  const [meta, setMeta] = useState(null)       // 저장된 글 정보 (번호, 날짜)
   const [missing, setMissing] = useState(false)
   const [status, setStatus] = useState('idle') // idle | saving | error
   const [message, setMessage] = useState('')
+  const [progress, setProgress] = useState(null) // { done, total }
   const [discard, setDiscard] = useState(false)
 
   const formRef = useRef(null)
   const bodyRef = useRef(null)
 
-  const dirty = form !== null && JSON.stringify(form) !== savedJson
+  const imagesDirty =
+    items.length !== savedImages.length ||
+    items.some((it, i) => it.kind !== 'stored' || it.path !== savedImages[i])
+  const dirty = form !== null && (JSON.stringify(form) !== savedJson || imagesDirty)
 
   /* 불러오기 */
   useEffect(() => {
@@ -138,6 +151,7 @@ export default function AdminEditor() {
     setMissing(false)
     setStatus('idle')
     setMessage('')
+    setProgress(null)
     setDiscard(false)
 
     if (isNew) {
@@ -147,6 +161,8 @@ export default function AdminEditor() {
       }
       setForm(init)
       setSavedJson(JSON.stringify(init))
+      setItems([])
+      setSavedImages([])
       setMeta(null)
       return
     }
@@ -162,6 +178,8 @@ export default function AdminEditor() {
         const f = fromPost(p)
         setForm(f)
         setSavedJson(JSON.stringify(f))
+        setItems(toItems(p.images))
+        setSavedImages(p.images ?? [])
         setMeta(p)
       })
       .catch((err) => {
@@ -253,6 +271,11 @@ export default function AdminEditor() {
     }))
   }
 
+  const onImages = (next) => {
+    setItems(next)
+    setDiscard(false)
+  }
+
   const onCancel = () => {
     if (dirty && !discard) {
       setDiscard(true)
@@ -264,7 +287,7 @@ export default function AdminEditor() {
   const onSave = async (e) => {
     e?.preventDefault()
     if (status === 'saving') return
-    const problem = validate(form, section)
+    const problem = validate(form, section, items.length)
     if (problem) {
       setStatus('error')
       setMessage(problem)
@@ -272,20 +295,36 @@ export default function AdminEditor() {
     }
     setStatus('saving')
     setMessage('')
+    setProgress(null)
     try {
-      const row = await savePost(postId, section, toFields(form, section))
+      const fields = toFields(form, section)
+      const row = hasImages
+        ? await commitPost(postId, section, fields, items, savedImages, setProgress)
+        : await savePost(postId, section, fields)
+
       setFlash(section, `Record #${pad4(row.id)} ${isNew ? 'committed' : 'revised'}.`)
-      setSavedJson(JSON.stringify(form))   // 떠날 때 '저장 안 함' 경고가 안 뜨게
+      // 떠날 때 '저장 안 함' 경고가 안 뜨게 저장된 상태로 맞춤
+      setSavedJson(JSON.stringify(form))
+      if (hasImages) {
+        setItems(toItems(row.images))
+        setSavedImages(row.images ?? [])
+      }
       go(listPath)
     } catch (err) {
       console.warn('[RF-01] commit failed:', err)
       setStatus('error')
-      setMessage('Commit failed — record not saved.')
+      setProgress(null)
+      setMessage('Commit failed — record not saved. Uploaded files rolled back.')
     }
   }
 
   const saving = status === 'saving'
   const recNo = isNew ? 'New' : `#${pad4(postId)}`
+
+  const savingText =
+    progress && progress.total > 0 && progress.done < progress.total
+      ? `Uploading ${pad2(progress.done + 1)} / ${pad2(progress.total)}`
+      : 'Committing…'
 
   return (
     <main className="rf-admin rf-edit">
@@ -302,6 +341,7 @@ export default function AdminEditor() {
           type="button"
           className={`rf-label rf-recs__back${discard ? ' is-warn' : ''}`}
           onClick={onCancel}
+          disabled={saving}
         >
           {discard ? 'Discard changes? — click again' : `← ${page.title}`}
         </button>
@@ -331,10 +371,10 @@ export default function AdminEditor() {
               <span className="rf-label">Revised</span>
               <span className="rf-spec__value rf-mono">{fmtDateTime(meta?.updated_at)}</span>
             </li>
-            {section === 'visual' && (
+            {hasImages && (
               <li>
                 <span className="rf-label">Images</span>
-                <span className="rf-spec__value rf-mono">{pad2(meta?.images?.length ?? 0)}</span>
+                <span className="rf-spec__value rf-mono">{pad2(items.length)}</span>
               </li>
             )}
           </ul>
@@ -417,8 +457,16 @@ export default function AdminEditor() {
             />
           </label>
 
+          {/* 이미지 (VISUAL DATA) */}
+          {hasImages && (
+            <div className="rf-edit__group">
+              <span className="rf-label rf-field__label">(Images — first = cover)</span>
+              <ImageField items={items} onChange={onImages} disabled={saving} />
+            </div>
+          )}
+
           {/* 작가·날짜·링크 (VISUAL DATA) */}
-          {section === 'visual' && (
+          {hasImages && (
             <>
               <div className="rf-edit__row">
                 <label className="rf-field">
@@ -487,23 +535,12 @@ export default function AdminEditor() {
               rows={spec.bodyRows}
               value={form.body}
               onChange={set('body')}
-              placeholder={section === 'visual' ? '—' : 'Begin record.'}
+              placeholder={hasImages ? '—' : 'Begin record.'}
             />
             <span className="rf-label rf-mono rf-edit__count">
               {form.body.length.toLocaleString()} chars
             </span>
           </label>
-
-          {/* 이미지 자리 (VISUAL DATA, 1-B-3에서 연결) */}
-          {section === 'visual' && (
-            <div className="rf-edit__group">
-              <span className="rf-label rf-field__label">(Images)</span>
-              <div className="rf-edit__slot rf-label">
-                Upload module pending — 1-B-3
-                {meta?.images?.length ? ` · ${pad2(meta.images.length)} on file` : ''}
-              </div>
-            </div>
-          )}
 
           {/* 저장·취소 */}
           <div className="rf-edit__actions">
@@ -512,7 +549,7 @@ export default function AdminEditor() {
               className={`rf-btn${saving ? ' is-busy' : ''}`}
               disabled={saving || owner === false}
             >
-              <span>{saving ? 'Committing…' : isNew ? 'Commit record' : 'Commit revision'}</span>
+              <span>{saving ? savingText : isNew ? 'Commit record' : 'Commit revision'}</span>
               <span aria-hidden="true">→</span>
               <i className="rf-btn__progress" aria-hidden="true" />
             </button>

@@ -169,7 +169,7 @@ export async function deletePost(post) {
 
 /* DAY 001 = 이비가 귀국한 날 (= 보호 시작).
    날짜가 정해지면 'YYYY-MM-DD' 형식으로 넣어. 예: '2024-11-08' */
-export const DAY_ONE = null
+export const DAY_ONE = '2024-12-03'
 
 export function dayNumber(iso) {
   if (!DAY_ONE || !iso) return null
@@ -192,7 +192,7 @@ export function dayLabel(iso) {
 
 const EDITABLE = [
   'title', 'body', 'subjects', 'artist', 'artist_url',
-  'drawn_on', 'observed_at', 'access',
+  'drawn_on', 'observed_at', 'access', 'images',
 ]
 
 /* 글 하나 (로그인한 나: CLASSIFIED 포함) */
@@ -225,4 +225,101 @@ export function setFlash(section, text) {
 export function readFlash(section) {
   if (!flash || flash.section !== section || Date.now() - flash.at > 4000) return null
   return { text: flash.text, alert: false }
+}
+
+/* ==========================================================
+   이미지 업로드 (1-B-3)
+   ========================================================== */
+
+export const MAX_IMAGES = 20
+export const MAX_BYTES = 50 * 1024 * 1024   // 버킷 한도와 같게
+
+const IMAGE_TYPES = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/avif': 'avif',
+}
+
+/* 올릴 수 없는 파일이면 이유를, 괜찮으면 null을 돌려줌 */
+export function checkImageFile(file) {
+  if (/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
+    return 'HEIC unsupported — convert to JPG'
+  }
+  if (!IMAGE_TYPES[file.type]) return 'Unsupported format'
+  if (file.size > MAX_BYTES) return 'Exceeds 50 MB'
+  return null
+}
+
+export function fmtBytes(n) {
+  if (n < 1024 * 1024) return `${Math.max(1, Math.round(n / 1024))} KB`
+  return `${(n / 1024 / 1024).toFixed(1)} MB`
+}
+
+/* 무작위 파일 이름 (폰에서 내부망 주소로 테스트할 때도 작동하게 예비 방식 포함) */
+function randomId() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+}
+
+export async function uploadImage(file, section) {
+  const ext = IMAGE_TYPES[file.type] ?? 'bin'
+  const path = `${section}/${randomId()}.${ext}`
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+    contentType: file.type,
+    cacheControl: '31536000',   // 이름이 매번 달라서 오래 캐시해도 안전
+    upsert: false,
+  })
+  if (error) throw error
+  return path
+}
+
+export async function removeImages(paths) {
+  const list = (paths ?? []).filter((p) => p && !/^https?:\/\//.test(p))
+  if (!list.length) return 0
+  const { data, error } = await supabase.storage.from(BUCKET).remove(list)
+  if (error) {
+    console.warn('[RF-01] image cleanup failed:', error)
+    return 0
+  }
+  return data?.length ?? 0
+}
+
+/**
+ * 이미지까지 포함한 저장
+ * items: [{ kind: 'stored', path } | { kind: 'new', key, file }]  (화면 순서 = 저장 순서)
+ * original: 저장되어 있던 이미지 경로 목록 (수정할 때)
+ * 순서: 새 이미지 업로드 → 글 저장 → (성공 시) 뺀 이미지 삭제
+ *       실패하면 방금 올린 파일을 지워서 되돌림
+ */
+export async function commitPost(id, section, fields, items, original = [], onProgress) {
+  const fresh = items.filter((i) => i.kind === 'new')
+  const uploaded = new Map()
+
+  try {
+    for (let i = 0; i < fresh.length; i += 1) {
+      onProgress?.({ done: i, total: fresh.length })
+      uploaded.set(fresh[i].key, await uploadImage(fresh[i].file, section))
+    }
+    onProgress?.({ done: fresh.length, total: fresh.length })
+  } catch (err) {
+    await removeImages([...uploaded.values()])
+    throw err
+  }
+
+  const images = items.map((i) => (i.kind === 'new' ? uploaded.get(i.key) : i.path))
+
+  let row
+  try {
+    row = await savePost(id, section, { ...fields, images })
+  } catch (err) {
+    await removeImages([...uploaded.values()])
+    throw err
+  }
+
+  const dropped = original.filter((p) => !images.includes(p))
+  if (dropped.length) await removeImages(dropped)
+
+  return row
 }
