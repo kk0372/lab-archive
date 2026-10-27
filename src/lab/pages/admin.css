@@ -220,9 +220,6 @@
   .rf-admin__row {
     grid-template-columns: 2rem minmax(0, 1fr) auto;
   }
-  .rf-admin__pending {
-    display: none;
-  }
 }
 
 /* ==========================================================
