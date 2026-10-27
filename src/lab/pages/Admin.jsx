@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PAGES } from '../Layout.jsx'
+import { PAGES, TLink } from '../Layout.jsx'
 import { useCounts, countLabel } from '../data/api.js'
 import { useAuth, signIn, signOut, maskEmail } from '../data/auth.js'
 import './admin.css'
@@ -200,11 +200,16 @@ function Console({ user, owner }) {
           <p className="rf-label rf-admin__caption">(Records)</p>
           <ul className="rf-admin__list">
             {PAGES.filter((p) => p.section).map((p) => (
-              <li key={p.path} className="rf-admin__row">
-                <span className="rf-label rf-mono">{p.no}</span>
-                <span className="rf-admin__name">{p.title}</span>
-                <span className="rf-label rf-mono">{countLabel(p.section, counts)}</span>
-                <span className="rf-label rf-admin__pending">New entry (1-B)</span>
+              <li key={p.path}>
+                <TLink
+                  to={`/admin/${p.section}`}
+                  className="rf-admin__row rf-admin__row--link"
+                >
+                  <span className="rf-label rf-mono">{p.no}</span>
+                  <span className="rf-admin__name">{p.title}</span>
+                  <span className="rf-label rf-mono">{countLabel(p.section, counts)}</span>
+                  <span className="rf-label rf-admin__go">Manage →</span>
+                </TLink>
               </li>
             ))}
           </ul>

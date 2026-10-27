@@ -129,3 +129,36 @@ export function countLabel(section, counts) {
   if (!counts) return '(··)'
   return `(${pad2(counts[section] ?? 0)})`
 }
+
+/* ==========================================================
+   관리 (1-B)
+   ========================================================== */
+
+export function fmtDateTime(iso) {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  return `${d.getFullYear()}.${pad2(d.getMonth() + 1)}.${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`
+}
+
+/* 글 삭제: DB 먼저 → 저장소 이미지 나중. 지운 이미지 개수를 돌려줌 */
+export async function deletePost(post) {
+  const { data, error } = await supabase
+    .from('posts')
+    .delete()
+    .eq('id', post.id)
+    .select('id')
+  if (error) throw error
+  // 권한 문제 등으로 실제로는 안 지워졌으면 실패로 처리
+  if (!data || data.length === 0) throw new Error('NOT_DELETED')
+
+  const paths = (post.images ?? []).filter((p) => p && !/^https?:\/\//.test(p))
+  let removed = 0
+  if (paths.length) {
+    const { data: gone, error: e2 } = await supabase.storage.from(BUCKET).remove(paths)
+    if (e2) console.warn('[RF-01] image cleanup failed:', e2)
+    else removed = gone?.length ?? 0
+  }
+
+  notifyPostsChanged()
+  return removed
+}

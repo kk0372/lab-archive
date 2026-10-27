@@ -224,3 +224,200 @@
     display: none;
   }
 }
+
+/* ==========================================================
+   1-B-1 / RECORDS (글 목록·삭제)
+   ========================================================== */
+
+/* 콘솔 구역 줄: 누르면 목록으로 */
+.rf-admin__go {
+  display: inline-block;
+  color: var(--ink-60);
+  transition:
+    color 300ms var(--ease-out),
+    transform 300ms var(--ease-out);
+}
+.rf-admin__row--link:hover .rf-admin__go,
+.rf-admin__row--link:focus-visible .rf-admin__go {
+  color: var(--ink);
+  transform: translateX(4px);
+}
+
+/* 위쪽 줄: ← CONSOLE ··· 개수 ··· NEW ENTRY */
+.rf-recs__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-3) var(--sp-5);
+  margin-top: var(--sp-6);
+  padding-block: var(--sp-3);
+  border-top: var(--line);
+}
+.rf-recs__stats {
+  margin-left: auto;
+}
+.rf-recs__back {
+  transition: color var(--dur-fast) linear;
+}
+.rf-recs__back:hover {
+  color: var(--ink);
+}
+.rf-recs__empty {
+  margin-top: var(--sp-6);
+}
+
+/* 목록 */
+.rf-recs {
+  list-style: none;
+  margin-top: var(--sp-4);
+  border-top: var(--line);
+}
+.rf-rec {
+  border-bottom: var(--line);
+}
+.rf-rec__main {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto 9.5rem auto;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+}
+.rf-recs--visual .rf-rec__main {
+  grid-template-columns: 48px 4.5rem minmax(0, 1fr) auto 9.5rem auto;
+}
+
+/* 대표 이미지 썸네일 */
+.rf-rec__thumb {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border: var(--line);
+  background: var(--paper-deep);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-style: normal;
+  color: var(--ink-20);
+}
+.rf-rec__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rf-rec__title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+/* 등급 태그 */
+.rf-rec__tag {
+  padding: 3px 7px;
+  border: 1px solid var(--ink-20);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-60);
+}
+.rf-rec__tag.is-classified {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper-light);
+}
+
+.rf-rec__date {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.rf-rec__actions {
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}
+.rf-rec__del {
+  padding: 0;
+  transition: color var(--dur-fast) linear;
+}
+.rf-rec__del:hover:not(:disabled),
+.rf-rec.is-confirm .rf-rec__del {
+  color: var(--alert);
+}
+.rf-rec__del:disabled {
+  opacity: 0.35;
+}
+
+/* 삭제 확인 칸 */
+.rf-rec__confirm {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  padding: 12px 14px;
+  border: 1px solid rgba(180, 72, 60, 0.35);
+  background: rgba(180, 72, 60, 0.04);
+  animation: rf-rec-open 300ms var(--ease-out);
+}
+.rf-rec__confirm > .rf-label:first-child {
+  color: var(--alert);
+}
+.rf-rec__confirm-actions {
+  display: inline-flex;
+  gap: var(--sp-4);
+}
+.rf-rec__cancel,
+.rf-rec__purge {
+  padding: 0;
+}
+.rf-rec__cancel:hover:not(:disabled) {
+  color: var(--ink);
+}
+.rf-rec__purge {
+  color: var(--alert);
+}
+.rf-rec__purge:hover:not(:disabled) {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@keyframes rf-rec-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 600px) {
+  .rf-admin__row {
+    grid-template-columns: 2rem minmax(0, 1fr) auto auto;
+  }
+  .rf-recs__stats {
+    margin-left: 0;
+  }
+  .rf-rec__main {
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  .rf-recs--visual .rf-rec__main {
+    grid-template-columns: 40px 3.5rem minmax(0, 1fr) auto;
+  }
+  .rf-rec__thumb {
+    width: 40px;
+    height: 40px;
+  }
+  .rf-rec__date {
+    display: none;
+  }
+  .rf-rec__actions {
+    grid-column: 1 / -1;   /* 버튼은 아랫줄 오른쪽으로 */
+  }
+}

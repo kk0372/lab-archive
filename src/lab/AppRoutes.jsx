@@ -4,6 +4,7 @@ import './styles/global.css'
 import Layout, { PAGES, TLink } from './Layout.jsx'
 import LabPreview from './LabPreview.jsx'
 import Admin from './pages/Admin.jsx'
+import AdminList from './pages/AdminList.jsx'
 
 const ph = {
   main: {
@@ -43,6 +44,7 @@ export default function AppRoutes() {
           <Route key={p.path} path={p.path} element={<Placeholder {...p} />} />
         ))}
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/:section" element={<AdminList />} />
         <Route
           path="*"
           element={<Placeholder no="404" title="No record" note="Not found" />}
