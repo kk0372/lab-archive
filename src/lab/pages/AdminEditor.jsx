@@ -287,6 +287,11 @@ export default function AdminEditor() {
   const onSave = async (e) => {
     e?.preventDefault()
     if (status === 'saving') return
+    if (items.some((it) => it.status === 'processing')) {
+      setStatus('error')
+      setMessage('Images still processing — wait a moment.')
+      return
+    }
     const problem = validate(form, section, items.length)
     if (problem) {
       setStatus('error')

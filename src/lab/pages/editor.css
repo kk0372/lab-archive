@@ -467,3 +467,53 @@ button.rf-img__cover:hover:not(:disabled) {
     height: 36px;
   }
 }
+
+/* ── 1-B-3-C: 처리 중 표시 + 용량 ── */
+.rf-img__proc {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(238, 241, 238, 0.55);
+}
+.rf-img__proc::before {
+  content: 'Processing';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.rf-img__proc i {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 2px;
+  overflow: hidden;
+}
+.rf-img__proc i::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  background: rgb(var(--evie-rgb));
+  animation: rf-btn-flow 1.1s var(--ease-precise) infinite;
+}
+
+/* 용량 표시: 길어져도 썸네일 폭 안에 들어가게 */
+.rf-img__meta {
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  letter-spacing: 0.06em;
+}
+.rf-img__meta .is-shrunk {
+  color: var(--ink);
+}
+.rf-img__tile.is-processing .rf-img__meta span:last-child {
+  animation: rf-admin-blink 1.2s steps(2) infinite;
+}
