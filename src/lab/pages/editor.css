@@ -394,3 +394,76 @@
     gap: var(--sp-2);
   }
 }
+
+/* ── 1-B-3-B: 순서 조작 ── */
+.rf-img__grid {
+  grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+}
+
+.rf-img__ctrl {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.rf-img__step {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ink-20);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1;
+  color: var(--ink);
+  transition:
+    background-color 200ms linear,
+    border-color 200ms linear,
+    color 200ms linear;
+}
+.rf-img__step:hover:not(:disabled) {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper-light);
+}
+.rf-img__step:disabled {
+  opacity: 0.25;
+}
+
+.rf-img__cover {
+  margin-left: auto;
+  padding: 0;
+  white-space: nowrap;
+  transition: color var(--dur-fast) linear;
+}
+button.rf-img__cover:hover:not(:disabled) {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.rf-img__cover.is-on {
+  color: var(--ink);
+}
+
+/* 방금 옮긴 장: 연녹색으로 잠깐 반짝임 */
+@keyframes rf-img-moved-a {
+  0%   { box-shadow: 0 0 0 3px rgba(var(--evie-rgb), 0.9); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--evie-rgb), 0); }
+}
+@keyframes rf-img-moved-b {
+  0%   { box-shadow: 0 0 0 3px rgba(var(--evie-rgb), 0.9); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--evie-rgb), 0); }
+}
+
+/* 폰: 2열 + 버튼을 손가락 크기로 */
+@media (max-width: 600px) {
+  .rf-img__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-3);
+  }
+  .rf-img__step {
+    width: 36px;
+    height: 36px;
+  }
+}
