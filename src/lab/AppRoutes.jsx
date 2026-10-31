@@ -6,6 +6,7 @@ import LabPreview from './LabPreview.jsx'
 import Admin from './pages/Admin.jsx'
 import AdminList from './pages/AdminList.jsx'
 import AdminEditor from './pages/AdminEditor.jsx'
+import Visual from './pages/Visual.jsx'
 
 const ph = {
   main: {
@@ -36,14 +37,23 @@ function Placeholder({ no, title, note }) {
   )
 }
 
+/* 완성된 메뉴 페이지: 하나씩 늘어날 때마다 여기에 추가 */
+const BUILT = {
+  '/visual': <Visual />,
+}
+
 export default function AppRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<LabPreview />} />
         {PAGES.map((p) => (
-          <Route key={p.path} path={p.path} element={<Placeholder {...p} />} />
+          <Route key={p.path} path={p.path} element={BUILT[p.path] ?? <Placeholder {...p} />} />
         ))}
+        <Route
+          path="/visual/:id"
+          element={<Placeholder no="05" title="Specimen" note="Inspection — 2-1-B" />}
+        />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/:section" element={<AdminList />} />
         <Route path="/admin/:section/new" element={<AdminEditor />} />

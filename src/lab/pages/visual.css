@@ -1,0 +1,388 @@
+/* ==========================================================
+   RF-01 / VISUAL DATA — 목록
+   ========================================================== */
+
+.rf-vis {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding:
+    calc(var(--bar-top) + 40px)
+    var(--gutter)
+    calc(var(--hud-veil-height) + var(--sp-5));
+}
+
+.rf-vis__top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.rf-vis__title {
+  font-size: clamp(2.75rem, 10vw, 8rem);
+  margin-top: var(--sp-5);
+}
+
+/* ── 필터 + 개수 줄 ── */
+.rf-vis__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-5);
+  margin-top: var(--sp-6);
+  padding-block: var(--sp-3);
+  border-top: var(--line);
+  border-bottom: var(--line);
+}
+
+.rf-filter {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--ink-20);
+}
+.rf-filter__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-60);
+  transition:
+    background-color 250ms var(--ease-out),
+    color 250ms var(--ease-out);
+}
+.rf-filter__opt + .rf-filter__opt {
+  border-left: 1px solid var(--ink-20);
+}
+.rf-filter__opt:not(.is-on):hover {
+  color: var(--ink);
+}
+.rf-filter__opt.is-on {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+.rf-filter__opt small {
+  font-size: inherit;
+  opacity: 0.7;
+}
+.rf-filter__sw {
+  width: 7px;
+  height: 7px;
+  background: var(--ink);
+}
+.rf-filter__sw--evie {
+  background: var(--evie);
+  box-shadow: inset 0 0 0 1px var(--ink-20);
+}
+.rf-filter__opt.is-on .rf-filter__sw--yeon {
+  background: var(--paper-light);
+}
+
+/* ── 상태 문구 ── */
+.rf-vis__state {
+  margin-top: var(--sp-6);
+}
+.rf-vis__state.is-alert {
+  color: var(--alert);
+}
+.rf-vis__blink {
+  animation: rf-admin-blink 1.2s steps(2) infinite;
+}
+@keyframes rf-admin-blink {
+  50% { opacity: 0.35; }
+}
+
+.rf-vis__foot {
+  margin-top: var(--sp-7);
+  color: var(--ink-40);
+}
+
+/* ── 격자 ── */
+.rf-vis__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--sp-6) var(--sp-4);
+  margin-top: var(--sp-5);
+}
+
+/* 카드가 차례로 떠오름 */
+.rf-spc {
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rf-spc-in 700ms var(--ease-out) calc(var(--i) * 60ms) forwards;
+}
+@keyframes rf-spc-in {
+  to { opacity: 1; transform: none; }
+}
+
+.rf-spc__link {
+  display: block;
+}
+
+/* ── 슬라이드 ── */
+.rf-spc__frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--ink-20);
+  background: var(--paper-deep);
+  transition: border-color 400ms var(--ease-out);
+}
+/* 불러오는 동안 아주 옅게 깜빡임 */
+.rf-spc__frame:not(.is-loaded) {
+  animation: rf-spc-wait 1.6s ease-in-out infinite;
+}
+@keyframes rf-spc-wait {
+  50% { background-color: var(--paper); }
+}
+
+.rf-spc__plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.rf-spc__plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.02);
+  filter: saturate(0.82);
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 900ms var(--ease-out),
+    filter 600ms var(--ease-out);
+}
+.rf-spc__frame.is-loaded .rf-spc__plate img {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 스캔선 */
+.rf-spc__plate::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: rgba(var(--evie-rgb), 0.95);
+  box-shadow: 0 0 14px rgba(var(--evie-rgb), 0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes rf-spc-scan {
+  0%   { top: 0;    opacity: 1; }
+  85%  {            opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* 마우스를 올렸을 때 (마우스 기기만) */
+@media (hover: hover) {
+  .rf-spc__link:hover .rf-spc__frame {
+    border-color: var(--ink);
+  }
+  .rf-spc__link:hover .rf-spc__plate img {
+    filter: saturate(1);
+    transform: scale(1.03);
+  }
+  .rf-spc__link:hover .rf-spc__plate::after {
+    animation: rf-spc-scan 1.1s var(--ease-precise);
+  }
+  .rf-spc__link:hover .rf-spc__c {
+    opacity: 1;
+  }
+}
+
+/* 라벨 */
+.rf-spc__code,
+.rf-spc__count,
+.rf-spc__flag {
+  position: absolute;
+  padding: 3px 6px;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.rf-spc__code {
+  left: 8px;
+  top: 8px;
+  background: rgba(238, 241, 238, 0.88);
+  color: var(--ink);
+}
+.rf-spc__count {
+  right: 8px;
+  top: 8px;
+  background: rgba(238, 241, 238, 0.88);
+  color: var(--ink-60);
+}
+.rf-spc__flag {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  background: var(--ink);
+  color: var(--paper-light);
+}
+
+/* 모서리 + (마우스를 올리면 나타남) */
+.rf-spc__c {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+}
+.rf-spc__c::before,
+.rf-spc__c::after {
+  content: '';
+  position: absolute;
+  background: var(--ink);
+}
+.rf-spc__c::before { left: 0; right: 0; top: 5px; height: 1px; }
+.rf-spc__c::after  { top: 0; bottom: 0; left: 5px; width: 1px; }
+.rf-spc__c--tl { top: -6px; left: -6px; }
+.rf-spc__c--tr { top: -6px; right: -6px; }
+.rf-spc__c--bl { bottom: -6px; left: -6px; }
+.rf-spc__c--br { bottom: -6px; right: -6px; }
+
+/* ── 카드 아래 정보 ── */
+.rf-spc__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+}
+.rf-spc__title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+.rf-spc__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+.rf-spc__artist {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-transform: none;   /* @아이디는 대소문자 그대로 */
+}
+.rf-spc__subjects {
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+}
+.rf-spc__sw {
+  width: 7px;
+  height: 7px;
+  background: var(--ink);
+}
+.rf-spc__sw--evie {
+  background: var(--evie);
+  box-shadow: inset 0 0 0 1px var(--ink-20);
+}
+
+/* ── 잠긴 카드 ── */
+.rf-spc__hatch {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(var(--ink-rgb), 0.09) 0 1px,
+      transparent 1px 9px
+    ),
+    var(--paper-deep);
+}
+.rf-spc__seal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--ink-40);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-40);
+}
+.rf-spc__seal b {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+.rf-spc__sealtag {
+  padding: 2px 6px;
+  background: var(--ink);
+  color: var(--paper-light);
+}
+
+/* 제목 자리의 검은 줄 */
+.rf-spc__bar {
+  display: block;
+  width: 72%;
+  height: 0.95rem;
+  margin-block: 2px 3px;
+  background: var(--ink);
+}
+
+@media (hover: hover) {
+  .rf-spc--locked .rf-spc__link:hover .rf-spc__seal {
+    border-color: var(--ink);
+  }
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 600px) {
+  .rf-vis__top > :last-child {
+    display: none;
+  }
+  .rf-filter {
+    width: 100%;
+  }
+  .rf-filter__opt {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 6px;
+    letter-spacing: 0.08em;
+  }
+  .rf-vis__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-5) var(--sp-3);
+  }
+  .rf-spc__code,
+  .rf-spc__count {
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+  }
+  .rf-spc__row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .rf-spc__seal {
+    padding: 8px 8px;
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+  }
+}
