@@ -7,6 +7,7 @@ import Admin from './pages/Admin.jsx'
 import AdminList from './pages/AdminList.jsx'
 import AdminEditor from './pages/AdminEditor.jsx'
 import Visual from './pages/Visual.jsx'
+import VisualDetail from './pages/VisualDetail.jsx'
 
 const ph = {
   main: {
@@ -50,10 +51,7 @@ export default function AppRoutes() {
         {PAGES.map((p) => (
           <Route key={p.path} path={p.path} element={BUILT[p.path] ?? <Placeholder {...p} />} />
         ))}
-        <Route
-          path="/visual/:id"
-          element={<Placeholder no="05" title="Specimen" note="Inspection — 2-1-B" />}
-        />
+        <Route path="/visual/:id" element={<VisualDetail />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/:section" element={<AdminList />} />
         <Route path="/admin/:section/new" element={<AdminEditor />} />

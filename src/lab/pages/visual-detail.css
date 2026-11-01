@@ -1,0 +1,405 @@
+/* ==========================================================
+   RF-01 / VISUAL DATA — 크게 보기 (Inspection)
+   ========================================================== */
+
+.rf-insp {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding:
+    calc(var(--bar-top) + 40px)
+    var(--gutter)
+    calc(var(--hud-veil-height) + var(--sp-5));
+}
+
+.rf-insp__top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.rf-insp__title {
+  font-size: clamp(2.5rem, 8vw, 6.5rem);
+  margin-top: var(--sp-5);
+}
+
+.rf-insp__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin-top: var(--sp-5);
+  padding-block: var(--sp-3);
+  border-top: var(--line);
+}
+.rf-insp__back {
+  transition: color var(--dur-fast) linear;
+}
+.rf-insp__back:hover {
+  color: var(--ink);
+}
+.rf-insp__state {
+  margin-top: var(--sp-6);
+}
+
+/* ── 배치: 관찰대 왼쪽, 기록표 오른쪽 ── */
+.rf-insp__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-6);
+  margin-top: var(--sp-4);
+}
+.rf-insp__viewer {
+  grid-column: 1 / span 8;
+  min-width: 0;
+}
+.rf-insp__info {
+  grid-column: 9 / span 4;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--bar-top) + 56px);
+  min-width: 0;
+}
+
+/* ── 관찰대 ── */
+.rf-insp__stage {
+  position: relative;
+  height: clamp(320px, 74svh, 960px);
+  border: 1px solid var(--ink-20);
+  background: var(--paper-deep);
+  touch-action: pan-y;          /* 세로 스크롤은 그대로, 가로 밀기는 넘기기 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rf-insp__slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 2.5vw, 32px);
+  overflow: hidden;
+  animation: rf-insp-in 520ms var(--ease-out);
+}
+@keyframes rf-insp-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 0) * 18px));
+  }
+}
+.rf-insp__slide img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  opacity: 0;
+  box-shadow: 0 22px 44px -28px rgba(var(--ink-rgb), 0.45);
+  transition: opacity 500ms var(--ease-out);
+}
+.rf-insp__slide.is-loaded img {
+  opacity: 1;
+}
+
+.rf-insp__wait {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  animation: rf-admin-blink 1.2s steps(2) infinite;
+}
+
+/* 관찰대 라벨 */
+.rf-insp__tag {
+  position: absolute;
+  top: 10px;
+  padding: 3px 7px;
+  background: rgba(238, 241, 238, 0.9);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.rf-insp__tag--code {
+  left: 10px;
+  color: var(--ink);
+}
+.rf-insp__tag--plate {
+  right: 10px;
+  color: var(--ink-60);
+}
+
+/* 넘기기 버튼 */
+.rf-insp__nav {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  transform: translateY(-50%);
+  border: 1px solid var(--ink-20);
+  background: rgba(238, 241, 238, 0.88);
+  font-family: var(--font-mono);
+  color: var(--ink);
+  transition:
+    background-color 250ms var(--ease-out),
+    color 250ms var(--ease-out),
+    border-color 250ms var(--ease-out);
+}
+.rf-insp__nav--prev { left: 10px; }
+.rf-insp__nav--next { right: 10px; }
+.rf-insp__nav:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper-light);
+}
+
+/* 모서리 + */
+.rf-insp__c {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  pointer-events: none;
+}
+.rf-insp__c::before,
+.rf-insp__c::after {
+  content: '';
+  position: absolute;
+  background: var(--ink);
+}
+.rf-insp__c::before { left: 0; right: 0; top: 5px; height: 1px; }
+.rf-insp__c::after  { top: 0; bottom: 0; left: 5px; width: 1px; }
+.rf-insp__c--tl { top: -6px; left: -6px; }
+.rf-insp__c--tr { top: -6px; right: -6px; }
+.rf-insp__c--bl { bottom: -6px; left: -6px; }
+.rf-insp__c--br { bottom: -6px; right: -6px; }
+
+/* 썸네일 줄 */
+.rf-insp__strip {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  margin-top: var(--sp-3);
+  padding-bottom: 4px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.rf-insp__thumb {
+  position: relative;
+  display: block;
+  width: 56px;
+  height: 72px;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid var(--ink-20);
+  background: var(--paper-deep);
+  opacity: 0.5;
+  transition:
+    opacity 250ms var(--ease-out),
+    border-color 250ms var(--ease-out);
+}
+.rf-insp__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rf-insp__thumb span {
+  position: absolute;
+  left: 3px;
+  bottom: 3px;
+  padding: 1px 4px;
+  background: rgba(238, 241, 238, 0.9);
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+.rf-insp__thumb:hover {
+  opacity: 0.85;
+}
+.rf-insp__thumb.is-on {
+  opacity: 1;
+  border-color: var(--ink);
+}
+
+.rf-insp__under {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: 10px;
+}
+
+/* 바깥 링크 */
+.rf-insp__ext {
+  text-transform: none;
+  border-bottom: 1px solid var(--ink-20);
+  transition:
+    border-color var(--dur-fast) linear,
+    color var(--dur-fast) linear;
+}
+.rf-insp__ext:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+/* ── 기록표 ── */
+.rf-insp__name {
+  margin: var(--sp-3) 0 var(--sp-4);
+  font-size: clamp(1.375rem, 2.2vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.rf-insp__flag {
+  display: inline-block;
+  margin-bottom: var(--sp-4);
+  padding: 3px 8px;
+  background: var(--ink);
+  color: var(--paper-light);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.rf-insp__note {
+  margin-top: var(--sp-5);
+}
+.rf-insp__text {
+  margin-top: var(--sp-2);
+  white-space: pre-wrap;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.rf-insp__edit {
+  display: inline-block;
+  margin-top: var(--sp-5);
+  transition: color var(--dur-fast) linear;
+}
+.rf-insp__edit:hover {
+  color: var(--ink);
+}
+
+/* ── 잠긴 표본 ── */
+.rf-insp__hatch {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(var(--ink-rgb), 0.09) 0 1px,
+      transparent 1px 10px
+    ),
+    var(--paper-deep);
+}
+.rf-insp__seal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  border: 1px solid var(--ink-40);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-40);
+}
+.rf-insp__seal b {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+.rf-insp__sealtag {
+  padding: 2px 7px;
+  background: var(--ink);
+  color: var(--paper-light);
+}
+.rf-insp__bar-redact {
+  display: block;
+  width: 70%;
+  height: 1.4rem;
+  margin: var(--sp-3) 0 var(--sp-4);
+  background: var(--ink);
+}
+.rf-insp__lead {
+  margin-bottom: var(--sp-5);
+  color: var(--ink-60);
+}
+
+/* ── 앞뒤 표본 ── */
+.rf-insp__pager {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-7);
+  padding-block: var(--sp-4);
+  border-top: var(--line);
+  border-bottom: var(--line);
+}
+.rf-insp__pg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rf-insp__pg--older {
+  align-items: flex-end;
+  text-align: right;
+}
+.rf-insp__pg b {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--ink-60);
+  transition: color 250ms var(--ease-out);
+}
+.rf-insp__pg:hover b {
+  color: var(--ink);
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 900px) {
+  .rf-insp__viewer,
+  .rf-insp__info {
+    grid-column: 1 / -1;
+  }
+  .rf-insp__info {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .rf-insp__stage {
+    height: 62svh;
+  }
+  .rf-insp__nav {
+    width: 34px;
+    height: 34px;
+  }
+  .rf-insp__nav--prev { left: 6px; }
+  .rf-insp__nav--next { right: 6px; }
+  .rf-insp__tag {
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+  }
+  .rf-insp__pg b {
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+  }
+}
