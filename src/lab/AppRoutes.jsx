@@ -9,8 +9,8 @@ import AdminEditor from './pages/AdminEditor.jsx'
 import Visual from './pages/Visual.jsx'
 import VisualDetail from './pages/VisualDetail.jsx'
 import Logs from './pages/Logs.jsx'
-import Chronicles from './pages/Chronicles.jsx'
-import ChronicleRead from './pages/ChronicleRead.jsx'
+import Chronicles from './pages/Chronicles.jsx'         // 목록
+import ChronicleRead from './pages/ChronicleRead.jsx'   // 읽기 화면
 
 const ph = {
   main: {
@@ -53,15 +53,21 @@ export default function AppRoutes() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<LabPreview />} />
+
         {PAGES.map((p) => (
           <Route key={p.path} path={p.path} element={BUILT[p.path] ?? <Placeholder {...p} />} />
         ))}
+
+        {/* 상세 화면 */}
         <Route path="/visual/:id" element={<VisualDetail />} />
         <Route path="/chronicles/:id" element={<ChronicleRead />} />
+
+        {/* 관리 */}
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/:section" element={<AdminList />} />
         <Route path="/admin/:section/new" element={<AdminEditor />} />
         <Route path="/admin/:section/:id" element={<AdminEditor />} />
+
         <Route
           path="*"
           element={<Placeholder no="404" title="No record" note="Not found" />}
