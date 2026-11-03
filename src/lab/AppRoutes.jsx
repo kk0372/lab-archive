@@ -60,7 +60,7 @@ export default function AppRoutes() {
 
         {/* 상세 화면 */}
         <Route path="/visual/:id" element={<VisualDetail />} />
-        <Route path="/chronicles/:id" element={<Chronicles />} />
+        <Route path="/chronicles/:id" element={<ChronicleRead />} />
 
         {/* 관리 */}
         <Route path="/admin" element={<Admin />} />
