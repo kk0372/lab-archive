@@ -110,10 +110,12 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - 저장 안 한 상태에서 위쪽 INDEX 메뉴로 이동하면 경고 없음 (탭 닫기·새로고침·취소·←는 막음)
 - CLASSIFIED 글의 이미지 파일은 정확한 주소를 알면 열림 (이름이 무작위라 추측 불가)
 - Supabase 무료 플랜: 약 1주 미사용 시 일시정지 → 대시보드에서 Restore
+- 갤러리 카드·썸네일도 3000px 이미지를 불러옴. 많아지면 업로드 때 작은 썸네일을 따로 만드는 방식으로 개선 (ImageField.jsx 수정 필요 → 현재 파일 먼저 받기)
 ## 10. 진행 상황
 - ✅ 1단계: 메인 히어로 (STEP 0~7), 보안 정책, Vercel 배포
 - ✅ PHASE 0: 0-A 주소 · 0-B 레이아웃·전환 · 0-C 메뉴 · 0-D DB
 - ✅ PHASE 1: 1-A 로그인 · 1-B-1 목록·삭제 · 1-B-2 글쓰기·수정 · 1-B-3-A 업로드 · 1-B-3-B 순서 버튼 · 1-B-3-C 자동 축소
 - ⏭ 1-B-3-D 끌어서 순서 바꾸기: **선택, 보류(건너뜀)**
-- ⬜ PHASE 2 읽는 페이지: **2-1 VISUAL DATA** → 2-2 RESEARCH LOGS → 2-3 CHRONICLES → 2-4 SUBJECT 01 → 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
+- ✅ PHASE 2-1 VISUAL DATA: 2-1-A 목록(/visual, 3:4 카드, ?s= 필터, 잠긴 카드) · 2-1-B 크게 보기(/visual/:id, 원본 비율, 넘기기, 열람 코드)
+- ⬜ PHASE 2 남은 것: 2-2 RESEARCH LOGS → 2-3 CHRONICLES → 2-4 SUBJECT 01 → 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
 - ⬜ PHASE 3 정리: 옛 파일 삭제 (`App.jsx`, Tailwind 등. `src/supabase.js`는 유지)

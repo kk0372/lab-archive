@@ -1,0 +1,387 @@
+/* ==========================================================
+   RF-01 / RESEARCH LOGS
+   ========================================================== */
+
+.rf-logs {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding:
+    calc(var(--bar-top) + 40px)
+    var(--gutter)
+    calc(var(--hud-veil-height) + var(--sp-5));
+}
+
+.rf-logs__top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.rf-logs__title {
+  font-size: clamp(2.75rem, 10vw, 8rem);
+  margin-top: var(--sp-5);
+}
+
+/* ── 필터 + 정렬 ── */
+.rf-logs__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-5);
+  margin-top: var(--sp-6);
+  padding-block: var(--sp-3);
+  border-top: var(--line);
+  border-bottom: var(--line);
+}
+.rf-logs__filter {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--ink-20);
+}
+.rf-logs__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-60);
+  transition:
+    background-color 250ms var(--ease-out),
+    color 250ms var(--ease-out);
+}
+.rf-logs__opt + .rf-logs__opt {
+  border-left: 1px solid var(--ink-20);
+}
+.rf-logs__opt:not(.is-on):hover {
+  color: var(--ink);
+}
+.rf-logs__opt.is-on {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+.rf-logs__opt small {
+  font-size: inherit;
+  opacity: 0.7;
+}
+.rf-logs__opt.is-on .rf-log__swi--yeon {
+  background: var(--paper-light);
+}
+.rf-logs__order {
+  padding: 9px 0;
+  color: var(--ink);
+  transition: opacity var(--dur-fast) linear;
+}
+.rf-logs__order:hover {
+  opacity: 0.6;
+}
+
+.rf-logs__stats {
+  margin-top: var(--sp-3);
+}
+.rf-logs__state {
+  margin-top: var(--sp-6);
+}
+.rf-logs__state.is-alert {
+  color: var(--alert);
+}
+.rf-logs__blink {
+  animation: rf-logs-blink 1.2s steps(2) infinite;
+}
+@keyframes rf-logs-blink {
+  50% { opacity: 0.35; }
+}
+.rf-logs__foot {
+  margin-top: var(--sp-7);
+  color: var(--ink-40);
+}
+
+/* ── 날짜 묶음 ── */
+.rf-logs__list {
+  margin-top: var(--sp-5);
+}
+.rf-logs__chunk {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rf-logs-in 700ms var(--ease-out) calc(var(--i) * 70ms) forwards;
+}
+@keyframes rf-logs-in {
+  to { opacity: 1; transform: none; }
+}
+
+.rf-day {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--sp-4);
+  padding-block: var(--sp-6);
+  border-top: var(--line);
+}
+
+/* 왼쪽 도장 (스크롤하면 따라옴) */
+.rf-day__stamp {
+  grid-column: 1 / span 4;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--bar-top) + 56px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rf-day__stamp b {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 4.6vw, 4.25rem);
+  font-stretch: var(--display-stretch);
+  font-weight: var(--display-weight);
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.rf-day__count {
+  color: var(--ink-40);
+}
+
+/* 오른쪽 타임라인 */
+.rf-day__entries {
+  grid-column: 5 / span 8;
+  max-width: 44rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  padding-left: var(--sp-5);
+  border-left: 1px solid var(--ink-20);
+}
+
+/* 관찰 시작 전 */
+.rf-day.is-pre .rf-day__stamp b {
+  color: var(--ink-40);
+}
+.rf-day.is-pre .rf-day__entries {
+  border-left-style: dashed;
+}
+
+/* 기록 없는 날 */
+.rf-gap {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+  border-top: var(--line);
+  color: var(--ink-40);
+}
+.rf-gap::before,
+.rf-gap::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed var(--ink-20);
+}
+.rf-gap .rf-label {
+  color: var(--ink-40);
+}
+
+/* ── 기록 하나 ── */
+.rf-log {
+  position: relative;
+}
+/* 타임라인 점 */
+.rf-log::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--sp-5) - 4px);
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+.rf-day.is-pre .rf-log::before {
+  border-color: var(--ink-40);
+}
+
+.rf-log__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px var(--sp-3);
+}
+.rf-log__time {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.rf-log__sw {
+  display: inline-flex;
+  gap: 5px;
+  align-self: center;
+}
+.rf-log__swi {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--ink);
+}
+.rf-log__swi--evie {
+  background: var(--evie);
+  box-shadow: inset 0 0 0 1px var(--ink-20);
+}
+.rf-log__flag,
+.rf-log__seal {
+  padding: 2px 7px;
+  background: var(--ink);
+  color: var(--paper-light);
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rf-log__title {
+  margin-top: var(--sp-2);
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+.rf-log__body {
+  margin-top: var(--sp-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.rf-log__body.is-clamped {
+  max-height: 12.25em;   /* 약 7줄 */
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+
+.rf-log__foot {
+  display: flex;
+  gap: var(--sp-4);
+  margin-top: var(--sp-2);
+}
+.rf-log__foot:empty {
+  display: none;
+}
+.rf-log__more,
+.rf-log__edit,
+.rf-log__req {
+  padding: 0;
+  transition: color var(--dur-fast) linear;
+}
+.rf-log__more:hover,
+.rf-log__edit:hover,
+.rf-log__req:hover {
+  color: var(--ink);
+}
+
+/* ── 잠긴 기록 ── */
+.rf-log__redact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  margin-block: var(--sp-3);
+}
+.rf-log__redact span {
+  display: block;
+  height: 0.95em;
+  background: var(--ink);
+}
+.rf-log__req {
+  margin-top: 2px;
+}
+
+.rf-log__unlock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-2);
+  animation: rf-logs-in 300ms var(--ease-out);
+}
+.rf-log__input {
+  flex: 1 1 12rem;
+  min-width: 0;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--ink-20);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 1rem;   /* 아이폰 확대 방지 */
+  color: var(--ink);
+  outline: none;
+  transition: border-color 300ms var(--ease-out);
+}
+.rf-log__input:focus {
+  border-bottom-color: var(--ink);
+}
+.rf-log__input::placeholder {
+  color: var(--ink-20);
+}
+.rf-log__go {
+  padding: 8px 12px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  transition:
+    background-color 250ms var(--ease-out),
+    color 250ms var(--ease-out);
+}
+.rf-log__go:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+.rf-log__go:disabled {
+  opacity: 0.4;
+}
+.rf-log__msg {
+  flex-basis: 100%;
+  color: var(--ink-40);
+}
+.rf-log__msg.is-alert {
+  color: var(--alert);
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 900px) {
+  .rf-day__stamp {
+    grid-column: 1 / -1;
+    position: static;
+    margin-bottom: var(--sp-4);
+  }
+  .rf-day__entries {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .rf-logs__top > :last-child {
+    display: none;
+  }
+  .rf-logs__filter {
+    width: 100%;
+  }
+  .rf-logs__opt {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 6px;
+    letter-spacing: 0.08em;
+  }
+  .rf-day__entries {
+    padding-left: var(--sp-4);
+  }
+  .rf-log::before {
+    left: calc(-1 * var(--sp-4) - 4px);
+  }
+}
