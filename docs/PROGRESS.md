@@ -99,7 +99,7 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 | 폰에서 EDIT 안 보임 | `.rf-admin__pending { display:none }` 규칙 삭제 |
 | `api.js` 연결 실패 | import 경로는 `../../supabase.js`, export 이름 자동 탐색 |
 ## 8. 제품 결정
-- DAY 001 = **이비 귀국일**(= 공항 마중 = 보호 시작). `api.js`의 `DAY_ONE`은 **아직 null — 날짜 정해야 함.** 귀국 전 시각은 `PRE-OBS.`
+- DAY 001 = **이비 귀국일**(= 공항 마중 = 보호 시작). `DAY 001 = **2024-10-23 (수, 상강)**. api.js에 설정 완료. 기록은 서사 시간으로 관찰 시각을 직접 입력` 귀국 전 시각은 `PRE-OBS.`
 - CLASSIFIED: (b) 비밀번호 열람. 목록에는 제목 숨김, `[CLASSIFIED] RF-01-C/0012` + 날짜만. 열람 코드 설정은 SQL로 완료(별도 UI 없음)
 - 프로필(SUBJECT 01·02)·INTERACTION 타임라인: **코드 파일**에 작성
 - 이미지: 축소 (b) 긴 변 3000px, WebP 0.9 (GIF는 원본, 커지면 원본). 글당 최대 20장. 순서는 버튼(`←` `→` 대표 지정). 업로드는 COMMIT 때만, 실패 시 롤백
@@ -117,5 +117,6 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - ✅ PHASE 1: 1-A 로그인 · 1-B-1 목록·삭제 · 1-B-2 글쓰기·수정 · 1-B-3-A 업로드 · 1-B-3-B 순서 버튼 · 1-B-3-C 자동 축소
 - ⏭ 1-B-3-D 끌어서 순서 바꾸기: **선택, 보류(건너뜀)**
 - ✅ PHASE 2-1 VISUAL DATA: 2-1-A 목록(/visual, 3:4 카드, ?s= 필터, 잠긴 카드) · 2-1-B 크게 보기(/visual/:id, 원본 비율, 넘기기, 열람 코드)
-- ⬜ PHASE 2 남은 것: 2-2 RESEARCH LOGS → 2-3 CHRONICLES → 2-4 SUBJECT 01 → 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
+- `✅ PHASE 2-2 RESEARCH LOGS (/logs, 날짜별 묶음·빈 날 표시·PRE-OBS.·잠긴 기록 제자리 표시·인라인 열람)`
+- ⬜ PHASE 2 남은 것: 2-3 CHRONICLES → 2-4 SUBJECT 01 → 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
 - ⬜ PHASE 3 정리: 옛 파일 삭제 (`App.jsx`, Tailwind 등. `src/supabase.js`는 유지)

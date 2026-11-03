@@ -9,6 +9,8 @@ import AdminEditor from './pages/AdminEditor.jsx'
 import Visual from './pages/Visual.jsx'
 import VisualDetail from './pages/VisualDetail.jsx'
 import Logs from './pages/Logs.jsx'
+import Chronicles from './pages/Chronicles.jsx'
+import ChronicleRead from './pages/ChronicleRead.jsx'
 
 const ph = {
   main: {
@@ -43,6 +45,7 @@ function Placeholder({ no, title, note }) {
 const BUILT = {
   '/visual': <Visual />,
   '/logs': <Logs />,
+  '/chronicles': <Chronicles />,
 }
 
 export default function AppRoutes() {
@@ -54,6 +57,7 @@ export default function AppRoutes() {
           <Route key={p.path} path={p.path} element={BUILT[p.path] ?? <Placeholder {...p} />} />
         ))}
         <Route path="/visual/:id" element={<VisualDetail />} />
+        <Route path="/chronicles/:id" element={<ChronicleRead />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/:section" element={<AdminList />} />
         <Route path="/admin/:section/new" element={<AdminEditor />} />
