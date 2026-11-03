@@ -8,6 +8,7 @@ import AdminList from './pages/AdminList.jsx'
 import AdminEditor from './pages/AdminEditor.jsx'
 import Visual from './pages/Visual.jsx'
 import VisualDetail from './pages/VisualDetail.jsx'
+import Logs from './pages/Logs.jsx'
 
 const ph = {
   main: {
@@ -41,6 +42,7 @@ function Placeholder({ no, title, note }) {
 /* 완성된 메뉴 페이지: 하나씩 늘어날 때마다 여기에 추가 */
 const BUILT = {
   '/visual': <Visual />,
+  '/logs': <Logs />,
 }
 
 export default function AppRoutes() {

@@ -169,7 +169,7 @@ export async function deletePost(post) {
 
 /* DAY 001 = 이비가 귀국한 날 (= 보호 시작).
    날짜가 정해지면 'YYYY-MM-DD' 형식으로 넣어. 예: '2024-11-08' */
-export const DAY_ONE = '2024-12-03'
+export const DAY_ONE = '2024-10-23'
 
 export function dayNumber(iso) {
   if (!DAY_ONE || !iso) return null
