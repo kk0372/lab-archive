@@ -6,7 +6,7 @@ import './intro.css'
    PACE: 전체 속도 배율 (1 = 원래 속도, 클수록 느림)
    HOLD: 100%에 도달한 뒤 걷히기 전까지 멈추는 시간 (ms)
    ────────────────────────────────────────────── */
-const PACE = 1.1
+const PACE = 1.3
 const HOLD = 200
 
 const ms = (v) => v * PACE
@@ -65,7 +65,6 @@ function decide() {
 }
 
 const RUN = decide()
-let playedThisLoad = false   // 한 번 재생하면, 페이지를 이동했다 돌아와도 다시 안 나옴
 
 /* 매번 달라지는 것: 방울 위치·크기, 번지는 모양 */
 const VARY = {
@@ -86,8 +85,7 @@ function readObs() {
 }
 
 export default function Intro() {
-  const [phase, setPhase] = useState(() => (RUN.play && !playedThisLoad ? 'play' : 'done'))
-  const playing = useRef(phase === 'play').current
+  const [phase, setPhase] = useState(RUN.play ? 'play' : 'done')
   const rootRef = useRef(null)
   const pctRef = useRef(null)
   const volRef = useRef(null)
@@ -96,7 +94,7 @@ export default function Intro() {
 
   /* 인트로 동안: 스크롤 잠금 + 히어로 애니메이션 일시정지 */
   useLayoutEffect(() => {
-    if (!playing) return
+    if (!RUN.play) return
     const html = document.documentElement
     html.classList.add('rf-intro-active')
     window.scrollTo(0, 0)
@@ -104,7 +102,7 @@ export default function Intro() {
   }, [])
 
   useEffect(() => {
-    if (!playing) return
+    if (!RUN.play) return
     let disposed = false
     let exiting = false
     let raf = 0
@@ -170,7 +168,6 @@ export default function Intro() {
     const exit = () => {
       if (exiting || disposed) return
       exiting = true
-      playedThisLoad = true   // ← 추가
       timers.forEach(clearTimeout)
       cancelAnimationFrame(raf)
       rootRef.current?.classList.remove('is-frog')

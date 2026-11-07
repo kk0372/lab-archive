@@ -60,13 +60,17 @@ src/lab/
 ├─ data/
 │  ├─ api.js                    DB/Storage 공용 함수 (아래 6번)
 │  ├─ auth.js                   useAuth, signIn, signOut, maskEmail
-│  └─ resize.js                 이미지 축소 (긴 변 3000px, WebP 0.9)
+│  ├─ resize.js                 이미지 축소 (긴 변 3000px, WebP 0.9)
+│  └─ reading.js                명조 글꼴 불러오기, 문단·장면 전환 나누기, 읽기 설정·위치 저장(localStorage)
 └─ pages/
    ├─ Admin.jsx                 /admin 로그인 ↔ 콘솔
    ├─ AdminList.jsx             /admin/:section 목록·삭제
    ├─ AdminEditor.jsx           /admin/:section/new, /admin/:section/:id  ⚠️ 0번 규칙
    ├─ admin.css
-   └─ editor.css                ⚠️ 0번 규칙
+   ├─ editor.css                ⚠️ 0번 규칙
+   ├─ Chronicles.jsx            /chronicles 목록
+   ├─ ChronicleRead.jsx         /chronicles/:id 읽기 화면
+   └─ chronicles.css
 ```
 ## 5. 주소
 | 주소 | 상태 |
@@ -106,6 +110,7 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - VISUAL DATA는 이미지 최소 1장 필수
 - 옛 사이트: 삭제 예정
 - 메뉴 6개 확정: SUBJECT 01 / SUBJECT 02 / INTERACTION / CHRONICLES / VISUAL DATA / RESEARCH LOGS
+- CHRONICLES 본문 = Noto Serif KR(명조), 고딕 전환 가능. 장면 전환은 빈 줄 + '***'
 ## 9. 알려진 한계
 - 저장 안 한 상태에서 위쪽 INDEX 메뉴로 이동하면 경고 없음 (탭 닫기·새로고침·취소·←는 막음)
 - CLASSIFIED 글의 이미지 파일은 정확한 주소를 알면 열림 (이름이 무작위라 추측 불가)
@@ -117,6 +122,7 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - ✅ PHASE 1: 1-A 로그인 · 1-B-1 목록·삭제 · 1-B-2 글쓰기·수정 · 1-B-3-A 업로드 · 1-B-3-B 순서 버튼 · 1-B-3-C 자동 축소
 - ⏭ 1-B-3-D 끌어서 순서 바꾸기: **선택, 보류(건너뜀)**
 - ✅ PHASE 2-1 VISUAL DATA: 2-1-A 목록(/visual, 3:4 카드, ?s= 필터, 잠긴 카드) · 2-1-B 크게 보기(/visual/:id, 원본 비율, 넘기기, 열람 코드)
-- `✅ PHASE 2-2 RESEARCH LOGS (/logs, 날짜별 묶음·빈 날 표시·PRE-OBS.·잠긴 기록 제자리 표시·인라인 열람)`
-- ⬜ PHASE 2 남은 것: 2-3 CHRONICLES → 2-4 SUBJECT 01 → 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
+- ✅ PHASE 2-2 RESEARCH LOGS (/logs, 날짜별 묶음·빈 날 표시·PRE-OBS.·잠긴 기록 제자리 표시·인라인 열람)
+- ✅ PHASE 2-3 CHRONICLES (목록·읽기 화면·명조/고딕·크기·진행선·이어 읽기·잠긴 글)
+- ⬜ PHASE 2 남은 것: 2-4 SUBJECT 01 → 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
 - ⬜ PHASE 3 정리: 옛 파일 삭제 (`App.jsx`, Tailwind 등. `src/supabase.js`는 유지)

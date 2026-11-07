@@ -7,7 +7,7 @@ const CONFIG = {
   focusAt: 0.62,       // 화면 위에서부터 이 비율 지점보다 위로 올라오면 완전히 선명
   range: 0.3,          // 그 아래로 화면 높이의 이 비율만큼 내려가면 최대로 흐림
   maxBlur: 6,          // 최대 흐림 (px)
-  maxBlurMobile: 0,    // 폰: 흐림 없이 진하기로만 (아이폰 사파리 분홍 줄 버그 회피)
+  maxBlurMobile: 3,    // 폰에서 최대 흐림
   minOpacity: 0.18,    // 가장 흐릴 때의 진하기
 }
 
@@ -28,7 +28,6 @@ export default function FocusText({ text, as: Tag = 'p', className = '', style }
 
     const coarse = window.matchMedia('(pointer: coarse)').matches
     const maxBlur = coarse ? CONFIG.maxBlurMobile : CONFIG.maxBlur
-    const focusAt = coarse ? 0.8 : CONFIG.focusAt   // ← 이 줄 추가
 
     let lines = []
     let raf = 0
@@ -49,7 +48,7 @@ export default function FocusText({ text, as: Tag = 'p', className = '', style }
       raf = 0
       const vh = window.innerHeight
       const base = el.getBoundingClientRect().top
-      const focusY = vh * focusAt
+      const focusY = vh * CONFIG.focusAt
       const range = vh * CONFIG.range
 
       for (const line of lines) {
@@ -59,7 +58,7 @@ export default function FocusText({ text, as: Tag = 'p', className = '', style }
         if (q === line.last) continue      // 바뀐 줄만 다시 그림
         line.last = q
 
-        const filter = q === 0 || maxBlur === 0 ? 'none' : `blur(${(q * maxBlur).toFixed(2)}px)`
+        const filter = q === 0 ? 'none' : `blur(${(q * maxBlur).toFixed(2)}px)`
         const opacity = String(1 - q * (1 - CONFIG.minOpacity))
         for (const w of line.ws) {
           w.style.filter = filter
