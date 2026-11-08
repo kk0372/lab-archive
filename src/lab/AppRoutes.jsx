@@ -11,6 +11,7 @@ import VisualDetail from './pages/VisualDetail.jsx'
 import Logs from './pages/Logs.jsx'
 import Chronicles from './pages/Chronicles.jsx'         // 목록
 import ChronicleRead from './pages/ChronicleRead.jsx'   // 읽기 화면
+import SubjectProfile from './pages/SubjectProfile.jsx'
 
 const ph = {
   main: {
@@ -46,6 +47,7 @@ const BUILT = {
   '/visual': <Visual />,
   '/logs': <Logs />,
   '/chronicles': <Chronicles />,
+  '/subject/01': <SubjectProfile id="yeon" />,
 }
 
 export default function AppRoutes() {

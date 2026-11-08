@@ -323,3 +323,32 @@ export async function commitPost(id, section, fields, items, original = [], onPr
 
   return row
 }
+
+/* ==========================================================
+   SUBJECT 프로필 (2-4)
+   ========================================================== */
+
+/* 프로필 사진 경로 (없으면 null) */
+export async function fetchSubjectPhoto(subject) {
+  const { data, error } = await supabase
+    .from('subject_photos')
+    .select('path, updated_at')
+    .eq('subject', subject)
+    .maybeSingle()
+  if (error) throw error
+  return data
+}
+
+/* 열리는 줄: code가 없으면 주인 확인으로만 시도. 결과는 { 키: 문장 } */
+export async function unlockRedactions(code) {
+  const { data, error } = await supabase.rpc('unlock_redactions', code ? { code } : {})
+  if (error) return { ok: false, map: {} }
+  if (code) {
+    try {
+      sessionStorage.setItem(CODE_KEY, code)   // 다른 페이지 CLASSIFIED와 같은 코드
+    } catch {
+      /* 저장 못 해도 동작에는 문제없음 */
+    }
+  }
+  return { ok: true, map: Object.fromEntries((data ?? []).map((r) => [r.key, r.body])) }
+}
