@@ -29,11 +29,12 @@
 }
 .rf-sub__name b {
   font-size: clamp(1.25rem, 2vw, 1.625rem);
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 .rf-sub__hanja {
   font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 500;
   letter-spacing: 0.08em;
   color: var(--ink-60);
 }
@@ -64,7 +65,7 @@
   border-bottom-color: var(--ink);
 }
 
-/* ── 배치 ── */
+/* ── 배치: 왼쪽 4칸 | 빈 칸 | 기록 6칸 | 오른쪽 여백 1칸 ── */
 .rf-sub__grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -83,15 +84,22 @@
   min-width: 0;
 }
 .rf-sub__main {
-  grid-column: 6 / span 7;
+  grid-column: 6 / span 6;
   min-width: 0;
-  max-width: 46rem;
+  max-width: 48rem;
 }
 
-/* ── 사진 칸 ── */
+/* 창 높이가 낮으면 왼쪽 칸이 따라오지 않게 (아랫부분이 가려지지 않도록) */
+@media (max-height: 820px) {
+  .rf-sub__side {
+    position: static;
+  }
+}
+
+/* ── 사진 칸: 폭·칸·화면 높이 중 가장 작은 값 ── */
 .rf-sub__photo {
   margin: 0;
-  max-width: 320px;
+  width: min(100%, 300px, 30svh);
 }
 .rf-sub__plate {
   position: relative;
@@ -216,32 +224,49 @@
   border-top: var(--line);
 }
 
-/* 줄 하나: 라벨 | 값 */
+/* ── 줄 하나: 라벨 | 값 ── */
 .rf-sub__line {
   display: grid;
-  grid-template-columns: 11rem minmax(0, 1fr);
+  grid-template-columns: 12rem minmax(0, 1fr);
   align-items: baseline;
   gap: var(--sp-4);
-  padding-block: 12px;
+  padding-block: 18px;
   border-bottom: var(--line);
 }
 .rf-sub__line--nok .rf-sub__v {
   grid-column: 1 / -1;
 }
+
+/* 라벨: 한글이 또렷하게 나오도록 Pretendard */
 .rf-sub__k {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  letter-spacing: 0.06em;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
   line-height: 1.6;
   color: var(--ink-60);
 }
+
+/* 값 */
 .rf-sub__v {
-  font-size: 1rem;
-  line-height: 1.75;
-  letter-spacing: -0.01em;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: -0.015em;
   word-break: keep-all;
   overflow-wrap: anywhere;
   color: var(--ink);
+}
+
+/* 코드 표시(R-01, SEALED)는 숫자 글꼴 유지 */
+.rf-sub__rtag,
+.rf-sub__stag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-40);
 }
 
 /* ── 검은 줄 ── */
@@ -251,7 +276,7 @@
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
   word-break: break-all;
-  line-break: anywhere;      /* 어디서든 줄바꿈 → 값 칸 밖으로 안 나감 */
+  line-break: anywhere;
   overflow-wrap: anywhere;
   user-select: none;
   -webkit-user-select: none;
@@ -276,18 +301,10 @@
   color: var(--ink-40);
 }
 
-/* 열리는 줄 번호 */
-.rf-sub__rtag {
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-40);
-}
-
 /* 열린 줄 */
 .rf-sub__line--lock.is-open {
   box-shadow: inset 2px 0 0 rgb(var(--evie-rgb));
-  padding-left: 12px;
+  padding-left: 14px;
 }
 .rf-sub__line--lock.is-open .rf-sub__rtag {
   color: var(--ink);
@@ -327,7 +344,7 @@
   opacity: 0.38;
 }
 .rf-sub__line.is-faint .rf-sub__v {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 /* ── 서명 ── */
@@ -367,7 +384,17 @@
   }
 }
 
-/* ── 좁은 화면 ── */
+/* ── 중간 화면: 기록 칸을 한 칸 왼쪽으로, 오른쪽 여백 한 칸은 유지 ── */
+@media (max-width: 1200px) {
+  .rf-sub__main {
+    grid-column: 5 / span 7;
+  }
+  .rf-sub__line {
+    grid-template-columns: 10rem minmax(0, 1fr);
+  }
+}
+
+/* ── 좁은 화면: 위아래로 쌓기 ── */
 @media (max-width: 900px) {
   .rf-sub__side,
   .rf-sub__main {
@@ -378,22 +405,34 @@
     position: static;
   }
   .rf-sub__photo {
-    max-width: 260px;
+    width: min(100%, 240px);
   }
   .rf-sub__index {
     display: none;
   }
 }
 
+/* ── 폰: 메뉴바와 같은 좌우 여백, 라벨은 값 위로 ── */
 @media (max-width: 600px) {
+  .rf-sub {
+    padding-left: calc(var(--hud-inset) + 18px);
+    padding-right: calc(var(--hud-inset) + 18px);
+  }
   .rf-sub__top > :last-child {
     display: none;
   }
+  .rf-sub__photo {
+    width: min(100%, 200px);
+  }
   .rf-sub__line {
     grid-template-columns: minmax(0, 1fr);
-    gap: 2px;
+    gap: 4px;
+    padding-block: 16px;
   }
-  .rf-sub__photo {
-    max-width: 200px;
+  .rf-sub__k {
+    font-size: 0.8125rem;
+  }
+  .rf-sub__v {
+    font-size: 1rem;
   }
 }

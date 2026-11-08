@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { PAGES, TLink, useGo } from '../Layout.jsx'
 import {
   SECTIONS,
@@ -119,6 +119,9 @@ export default function AdminEditor() {
   const page = PAGES.find((p) => p.section === section)
   const spec = SPEC[section]
   const listPath = `/admin/${section}`
+  const [search] = useSearchParams()
+  const from = search.get('from')
+  const backPath = from && from.startsWith('/') && !from.startsWith('//') ? from : listPath
   const hasImages = section === 'visual'
 
   const go = useGo()
@@ -281,7 +284,7 @@ export default function AdminEditor() {
       setDiscard(true)
       return
     }
-    go(listPath)
+    go(backPath)
   }
 
   const onSave = async (e) => {
@@ -314,7 +317,7 @@ export default function AdminEditor() {
         setItems(toItems(row.images))
         setSavedImages(row.images ?? [])
       }
-      go(listPath)
+      go(backPath)
     } catch (err) {
       console.warn('[RF-01] commit failed:', err)
       setStatus('error')

@@ -80,7 +80,10 @@ function Entry({ r, owner }) {
           </button>
         )}
         {owner === true && (
-          <TLink to={`/admin/logs/${r.id}`} className="rf-label rf-log__edit">
+          <TLink
+            to={`/admin/logs/${r.id}?from=${encodeURIComponent(window.location.pathname + window.location.search)}`}
+            className="rf-label rf-log__edit"
+          >
             Edit →
           </TLink>
         )}

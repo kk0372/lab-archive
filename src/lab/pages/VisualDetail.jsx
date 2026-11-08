@@ -295,7 +295,10 @@ function Record({ post, code, owner, unlocked }) {
       )}
 
       {owner === true && (
-        <TLink to={`/admin/visual/${post.id}`} className="rf-label rf-insp__edit">
+        <TLink
+          to={`/admin/visual/${post.id}?from=${encodeURIComponent(`/visual/${post.id}`)}`}
+          className="rf-label rf-insp__edit"
+        >
           Edit record →
         </TLink>
       )}

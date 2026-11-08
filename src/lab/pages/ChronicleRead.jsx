@@ -257,7 +257,10 @@ function Reader({ post, owner, unlocked }) {
           </ul>
 
           {owner === true && (
-            <TLink to={`/admin/chronicles/${post.id}`} className="rf-label rf-read__edit">
+            <TLink
+              to={`/admin/chronicles/${post.id}?from=${encodeURIComponent(`/chronicles/${post.id}`)}`}
+              className="rf-label rf-read__edit"
+            >
               Edit record →
             </TLink>
           )}

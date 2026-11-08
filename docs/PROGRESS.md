@@ -89,6 +89,7 @@ src/lab/
 - 열람 코드 바꾸기: `schema.sql` 맨 아래 "열람 코드" SQL 다시 실행
 api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockClassified, savedCode, useCounts, countLabel, notifyPostsChanged, deletePost, savePost, commitPost, uploadImage, removeImages, checkImageFile, imageUrl, coverPath, dayNumber, dayLabel, DAY_ONE, setFlash/readFlash, MAX_IMAGES(20), MAX_BYTES(50MB)`
 - `fetchSubjectPhoto, unlockRedactions`
+- `setSubjectPhoto, removeSubjectPhoto` 추가. Storage에 `subjects/` 폴더 = 프로필 사진
 ## 7. 고친 함정 (다시 만들지 말 것)
 | 문제 | 해결 |
 |---|---|
@@ -122,5 +123,6 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - ✅ PHASE 2-2 RESEARCH LOGS (/logs, 날짜별 묶음·빈 날 표시·PRE-OBS.·잠긴 기록 제자리 표시·인라인 열람)
 - ✅ PHASE 2-3 CHRONICLES (목록·읽기 화면·명조/고딕·크기·진행선·이어 읽기·잠긴 글)
 - ✅ 2-4-B SUBJECT 01 화면 (/subject/01, 인라인 검은 줄, R-01~04 열람·걷힘 연출, 06 마지막 줄 지연 표시)
-- ⬜ PHASE 2 남은 것: 2-4 SUBJECT 01 → 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
+- ✅ 2-4-C 프로필 사진 업로드 (콘솔 SUBJECT PHOTOGRAPHS, 교체 시 이전 파일 삭제)
+- ⬜ PHASE 2 남은 것: 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
 - ⬜ PHASE 3 정리: 옛 파일 삭제 (`App.jsx`, Tailwind 등. `src/supabase.js`는 유지)
