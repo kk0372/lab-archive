@@ -352,3 +352,45 @@ export async function unlockRedactions(code) {
   }
   return { ok: true, map: Object.fromEntries((data ?? []).map((r) => [r.key, r.body])) }
 }
+
+/* ==========================================================
+   프로필 사진 관리 (2-4-C)
+   ========================================================== */
+
+/* 교체: 새 파일 업로드 → 표에 기록 → (성공 시) 이전 파일 삭제
+   실패하면 방금 올린 파일을 지워서 되돌림 */
+export async function setSubjectPhoto(subject, file) {
+  const { data: prev } = await supabase
+    .from('subject_photos')
+    .select('path')
+    .eq('subject', subject)
+    .maybeSingle()
+
+  const path = await uploadImage(file, 'subjects')
+
+  const { error } = await supabase
+    .from('subject_photos')
+    .upsert({ subject, path }, { onConflict: 'subject' })
+    .select('path')
+    .single()
+
+  if (error) {
+    await removeImages([path])
+    throw error
+  }
+
+  if (prev?.path && prev.path !== path) await removeImages([prev.path])
+  return path
+}
+
+/* 삭제: 표 기록 먼저 → 파일 나중 */
+export async function removeSubjectPhoto(subject) {
+  const { data, error } = await supabase
+    .from('subject_photos')
+    .delete()
+    .eq('subject', subject)
+    .select('path')
+  if (error) throw error
+  if (!data || data.length === 0) throw new Error('NOT_DELETED')
+  await removeImages(data.map((r) => r.path))
+}

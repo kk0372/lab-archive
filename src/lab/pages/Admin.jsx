@@ -2,9 +2,16 @@ import { useState } from 'react'
 import { PAGES, TLink } from '../Layout.jsx'
 import { useCounts, countLabel } from '../data/api.js'
 import { useAuth, signIn, signOut, maskEmail } from '../data/auth.js'
+import SubjectPhotoSlot from '../components/SubjectPhotoSlot.jsx'
 import './admin.css'
 
 const pad = (n) => String(n).padStart(2, '0')
+
+/* 프로필 사진 슬롯 */
+const PHOTO_SLOTS = [
+  { id: 'yeon', code: 'S-01', name: '서예온', path: '/subject/01' },
+  { id: 'evie', code: 'S-02', name: '이비', path: '/subject/02' },
+]
 
 function fmtTime(iso) {
   if (!iso) return '—'
@@ -213,6 +220,15 @@ function Console({ user, owner }) {
               </li>
             ))}
           </ul>
+
+          <p className="rf-label rf-admin__caption rf-admin__caption--gap">
+            (Subject photographs)
+          </p>
+          <div className="rf-photos">
+            {PHOTO_SLOTS.map((slot) => (
+              <SubjectPhotoSlot key={slot.id} slot={slot} disabled={owner === false} />
+            ))}
+          </div>
 
           <button
             type="button"
