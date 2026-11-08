@@ -262,7 +262,7 @@
   background:
     repeating-linear-gradient(
       -45deg,
-      rgba(238, 241, 238, 0.18) 0 1px,
+      rgba(238, 241, 238, 0.16) 0 1px,
       transparent 1px 6px
     ),
     var(--ink);
