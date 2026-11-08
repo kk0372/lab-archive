@@ -5,16 +5,23 @@ import { useAuth } from '../data/auth.js'
 import './admin.css'          // 입력칸·버튼 스타일 재사용
 import './subject.css'
 
-/* 검은 줄 안을 채우는 전각 공백 (글처럼 줄바꿈되도록) */
-const FILL = '\u3000'
+/* 검은 줄 안을 채우는 투명 글자: 실제 한글처럼 폭을 차지하고 줄바꿈됨 */
+const FILL = '가'
 
-function Bar({ n, label = 'Redacted' }) {
+function Bar({ n, label = 'Redacted', restricted = false }) {
   return (
-    <span className="rf-redact" role="img" aria-label={label}>
+    <span
+      className={`rf-redact${restricted ? ' rf-redact--restricted' : ''}`}
+      role="img"
+      aria-label={label}
+    >
       {FILL.repeat(Math.max(1, n))}
     </span>
   )
 }
+
+/* 값이 검은 줄로만 이루어져 있는지 */
+const onlyBars = (v) => /^(\s*\[\[\d+\]\]\s*)+$/.test(v ?? '')
 
 function Inline({ v }) {
   return parseInline(v).map((s, i) =>
@@ -60,7 +67,7 @@ function LockLine({ line, no, text, animate, firstRef }) {
       <div ref={no === 1 ? firstRef : undefined} className="rf-sub__line rf-sub__line--lock">
         <span className="rf-sub__k rf-sub__rtag">R-{pad2(no)}</span>
         <span className="rf-sub__v">
-          <Bar n={line.len} label={`Restricted line R-${pad2(no)}`} />
+          <Bar n={line.len} restricted label={`Restricted line R-${pad2(no)}`} />
         </span>
       </div>
     )
@@ -82,9 +89,12 @@ function LockLine({ line, no, text, animate, firstRef }) {
 
 function Line({ line }) {
   if (line.faint) return <FaintLine line={line} />
+  const sealedRow = !line.k && onlyBars(line.v)   // 라벨 없는 가린 줄 → SEALED 표시
+  const full = !line.k && !sealedRow              // 라벨 없는 일반 문장 → 한 줄 전체
   return (
-    <div className={`rf-sub__line${line.k ? '' : ' rf-sub__line--nok'}`}>
+    <div className={`rf-sub__line${full ? ' rf-sub__line--nok' : ''}`}>
       {line.k && <span className="rf-sub__k">{line.k}</span>}
+      {sealedRow && <span className="rf-sub__k rf-sub__stag">Sealed</span>}
       <span className="rf-sub__v">
         <Inline v={line.v} />
       </span>

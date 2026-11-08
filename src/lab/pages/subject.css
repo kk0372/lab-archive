@@ -251,8 +251,29 @@
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
   word-break: break-all;
+  line-break: anywhere;      /* 어디서든 줄바꿈 → 값 칸 밖으로 안 나감 */
+  overflow-wrap: anywhere;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* 열 수 있는 줄 (R-01~): 아주 옅은 사선 */
+.rf-redact--restricted {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(238, 241, 238, 0.18) 0 1px,
+      transparent 1px 6px
+    ),
+    var(--ink);
+}
+
+/* 라벨 없는 가린 줄의 SEALED 표시 */
+.rf-sub__stag {
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-40);
 }
 
 /* 열리는 줄 번호 */
