@@ -170,3 +170,10 @@ body::after {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── 폰: 모든 페이지 좌우 여백을 메뉴바·HUD 글자와 같은 선으로 ── */
+@media (max-width: 600px) {
+  :root {
+    --gutter: calc(var(--hud-inset) + 18px);
+  }
+}

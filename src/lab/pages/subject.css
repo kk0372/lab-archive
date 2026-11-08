@@ -65,41 +65,55 @@
   border-bottom-color: var(--ink);
 }
 
-/* ── 배치: 왼쪽 4칸 | 빈 칸 | 기록 6칸 | 오른쪽 여백 1칸 ── */
+/* ──────────────────────────────────────────────
+   배치: 프로필 칸 | 여백 | 기록(가운데, 최대 42rem) | 여백
+   ────────────────────────────────────────────── */
 .rf-sub__grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--sp-4);
-  row-gap: var(--sp-6);
+  grid-template-columns: clamp(200px, 21vw, 280px) minmax(0, 1fr);
   margin-top: var(--sp-6);
 }
+
+/* 왼쪽 칸: 따라오고, 화면보다 길면 칸 안에서 스크롤 */
 .rf-sub__side {
-  grid-column: 1 / span 4;
-  align-self: start;
   position: sticky;
   top: calc(var(--bar-top) + 56px);
+  align-self: start;
+  max-height: calc(100svh - var(--bar-top) - 56px - var(--hud-veil-height) - 16px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-5);
+  gap: var(--sp-4);
   min-width: 0;
-}
-.rf-sub__main {
-  grid-column: 6 / span 6;
-  min-width: 0;
-  max-width: 48rem;
+  padding-right: 4px;   /* 스크롤바가 생겨도 내용에 붙지 않게 */
 }
 
-/* 창 높이가 낮으면 왼쪽 칸이 따라오지 않게 (아랫부분이 가려지지 않도록) */
-@media (max-height: 820px) {
+/* 기록 칸: 양옆 같은 여백 + 가운데 정렬 */
+.rf-sub__main {
+  min-width: 0;
+  padding-inline: clamp(var(--sp-5), 6vw, 7rem);
+}
+.rf-sub__main > * {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 창이 아주 낮을 때만 왼쪽 칸이 따라오지 않음 */
+@media (max-height: 560px) {
   .rf-sub__side {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
 }
 
-/* ── 사진 칸: 폭·칸·화면 높이 중 가장 작은 값 ── */
+/* ── 사진 칸 ── */
 .rf-sub__photo {
   margin: 0;
-  width: min(100%, 300px, 30svh);
+  width: min(100%, 220px, 28svh);
 }
 .rf-sub__plate {
   position: relative;
@@ -134,12 +148,12 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  padding: 10px 14px;
+  padding: 8px 10px;
   border: 1px solid var(--ink-40);
   background: var(--paper);
   font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
   line-height: 1.6;
   text-transform: uppercase;
   text-align: center;
@@ -148,9 +162,9 @@
 }
 .rf-sub__ptag {
   position: absolute;
-  left: 8px;
-  top: 8px;
-  padding: 3px 6px;
+  left: 6px;
+  top: 6px;
+  padding: 2px 5px;
   background: rgba(238, 241, 238, 0.9);
   font-family: var(--font-mono);
   font-size: 0.5625rem;
@@ -159,7 +173,7 @@
   color: var(--ink);
 }
 .rf-sub__cap {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 /* 모서리 + */
@@ -182,6 +196,11 @@
 .rf-sub__c--bl { bottom: -6px; left: -6px; }
 .rf-sub__c--br { bottom: -6px; right: -6px; }
 
+/* 왼쪽 표: 촘촘하게 */
+.rf-sub__side .rf-spec li {
+  padding-block: 9px;
+}
+
 /* 섹션 바로가기 */
 .rf-sub__index {
   display: flex;
@@ -191,7 +210,7 @@
 .rf-sub__index button {
   display: flex;
   gap: 10px;
-  padding: 8px 0;
+  padding: 7px 0;
   border-bottom: var(--line);
   text-align: left;
   transition: color var(--dur-fast) linear;
@@ -227,7 +246,7 @@
 /* ── 줄 하나: 라벨 | 값 ── */
 .rf-sub__line {
   display: grid;
-  grid-template-columns: 12rem minmax(0, 1fr);
+  grid-template-columns: clamp(8rem, 28%, 11rem) minmax(0, 1fr);
   align-items: baseline;
   gap: var(--sp-4);
   padding-block: 18px;
@@ -287,18 +306,10 @@
   background:
     repeating-linear-gradient(
       -45deg,
-      rgba(238, 241, 238, 0.16) 0 1px,
+      rgba(238, 241, 238, 0.18) 0 1px,
       transparent 1px 6px
     ),
     var(--ink);
-}
-
-/* 라벨 없는 가린 줄의 SEALED 표시 */
-.rf-sub__stag {
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-40);
 }
 
 /* 열린 줄 */
@@ -314,7 +325,7 @@
   display: block;
 }
 
-/* 걷히는 덮개: 왼쪽에서 오른쪽으로, 줄마다 차례로 */
+/* 걷히는 덮개 */
 .rf-sub__lid {
   position: absolute;
   inset: -2px;
@@ -333,7 +344,7 @@
   to { opacity: 1; }
 }
 
-/* 06 마지막 줄: 화면에 들어온 뒤 천천히 흐리게 */
+/* 06 마지막 줄 */
 .rf-sub__line.is-faint {
   margin-top: var(--sp-6);
   border-bottom: 0;
@@ -358,10 +369,13 @@
 
 /* ── 열람 칸 ── */
 .rf-sub__access {
-  max-width: 34rem;
   margin-top: var(--sp-7);
   padding-top: var(--sp-5);
   border-top: var(--line);
+}
+.rf-sub__access form,
+.rf-sub__accesstext {
+  max-width: 34rem;
 }
 .rf-sub__accesstext {
   margin: var(--sp-3) 0 var(--sp-4);
@@ -370,7 +384,7 @@
   color: var(--ink-60);
 }
 
-/* 모션 줄이기: 덮개 없이 바로 */
+/* 모션 줄이기 */
 @media (prefers-reduced-motion: reduce) {
   .rf-sub__lid {
     display: none;
@@ -384,45 +398,44 @@
   }
 }
 
-/* ── 중간 화면: 기록 칸을 한 칸 왼쪽으로, 오른쪽 여백 한 칸은 유지 ── */
-@media (max-width: 1200px) {
-  .rf-sub__main {
-    grid-column: 5 / span 7;
-  }
-  .rf-sub__line {
-    grid-template-columns: 10rem minmax(0, 1fr);
-  }
-}
-
-/* ── 좁은 화면: 위아래로 쌓기 ── */
+/* ── 태블릿: 위아래로 쌓고, 사진 | 표를 나란히 ── */
 @media (max-width: 900px) {
-  .rf-sub__side,
-  .rf-sub__main {
-    grid-column: 1 / -1;
-    max-width: none;
+  .rf-sub__grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--sp-6);
   }
   .rf-sub__side {
     position: static;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    align-items: start;
+    gap: var(--sp-5);
   }
   .rf-sub__photo {
-    width: min(100%, 240px);
+    width: 100%;
   }
   .rf-sub__index {
     display: none;
   }
+  .rf-sub__main {
+    padding-inline: 0;
+  }
 }
 
-/* ── 폰: 메뉴바와 같은 좌우 여백, 라벨은 값 위로 ── */
+/* ── 폰 ── */
 @media (max-width: 600px) {
-  .rf-sub {
-    padding-left: calc(var(--hud-inset) + 18px);
-    padding-right: calc(var(--hud-inset) + 18px);
-  }
   .rf-sub__top > :last-child {
     display: none;
   }
+  .rf-sub__side {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-4);
+  }
   .rf-sub__photo {
-    width: min(100%, 200px);
+    width: min(100%, 180px);
   }
   .rf-sub__line {
     grid-template-columns: minmax(0, 1fr);
