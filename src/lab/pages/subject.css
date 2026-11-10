@@ -93,7 +93,7 @@
 /* 기록 칸: 양옆 같은 여백 + 가운데 정렬 */
 .rf-sub__main {
   min-width: 0;
-  padding-inline: clamp(var(--sp-3), 6vw, 7rem);
+  padding-inline: clamp(var(--sp-7), 6vw, 7rem);
 }
 .rf-sub__main > * {
   max-width: 40rem;
