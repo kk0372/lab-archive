@@ -66,11 +66,11 @@
 }
 
 /* ──────────────────────────────────────────────
-   배치: 프로필 칸 | 여백 | 기록(가운데, 최대 42rem) | 여백
+   배치: 프로필 칸 | 여백 | 기록(가운데, 최대 38rem) | 여백
    ────────────────────────────────────────────── */
 .rf-sub__grid {
   display: grid;
-  grid-template-columns: clamp(200px, 21vw, 280px) minmax(0, 1fr);
+  grid-template-columns: clamp(200px, 23vw, 280px) minmax(0, 1fr);
   margin-top: var(--sp-6);
 }
 
@@ -96,7 +96,7 @@
   padding-inline: clamp(var(--sp-5), 6vw, 7rem);
 }
 .rf-sub__main > * {
-  max-width: 42rem;
+  max-width: 38rem;
   margin-left: auto;
   margin-right: auto;
 }
