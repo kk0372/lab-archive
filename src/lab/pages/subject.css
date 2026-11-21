@@ -96,7 +96,7 @@
   padding-inline: clamp(var(--sp-7), 6vw, 7rem);
 }
 .rf-sub__main > * {
-  max-width: 40rem;
+  max-width: 42rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -447,5 +447,53 @@
   }
   .rf-sub__v {
     font-size: 1rem;
+  }
+}
+
+/* ==========================================================
+   2-4 보정: 스크롤바 숨김 + 기록 크기·여백 균형
+   ========================================================== */
+
+/* 왼쪽 칸: 스크롤은 되지만 스크롤바는 안 보이게 */
+.rf-sub__side {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.rf-sub__side::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .rf-sub__side {
+    padding-right: 0;
+  }
+
+  /* 왼쪽 여백 = 오른쪽 여백 + 페이지 바깥 여백 → 눈으로 보기에 양쪽이 같게 */
+  .rf-sub__main {
+    padding-left: calc(var(--gutter) + clamp(0px, 3vw, 3rem));
+    padding-right: clamp(0px, 3vw, 3rem);
+  }
+  .rf-sub__main > * {
+    max-width: 38rem;
+  }
+
+  /* 기록 표: 한 단계 작게 */
+  .rf-sub__line {
+    grid-template-columns: clamp(7rem, 26%, 9.5rem) minmax(0, 1fr);
+    gap: var(--sp-3);
+    padding-block: 14px;
+  }
+  .rf-sub__k {
+    font-size: 0.8125rem;
+  }
+  .rf-sub__v {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+  .rf-sub__sechead b {
+    font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+  }
+  .rf-sub__sec {
+    margin-bottom: var(--sp-6);
   }
 }
