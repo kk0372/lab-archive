@@ -109,6 +109,7 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - 옛 사이트: 삭제 예정
 - 메뉴 6개 확정: SUBJECT 01 / SUBJECT 02 / INTERACTION / CHRONICLES / VISUAL DATA / RESEARCH LOGS
 - CHRONICLES 본문 = Noto Serif KR(명조), 고딕 전환 가능. 장면 전환은 빈 줄 + '***'
+- SUBJECT 02: 예온이의 관찰 기록. ~~취소선~~ 정정 5곳, 렌즈 문장 10개(예온이의 진짜 생각, 코드 파일에 있음, 잠그지 않음, 줄 끝 ◌ 표시), 열리는 줄 1개(s02-05-rain)
 ## 9. 알려진 한계
 - 저장 안 한 상태에서 위쪽 INDEX 메뉴로 이동하면 경고 없음 (탭 닫기·새로고침·취소·←는 막음)
 - CLASSIFIED 글의 이미지 파일은 정확한 주소를 알면 열림 (이름이 무작위라 추측 불가)
@@ -124,5 +125,6 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - ✅ PHASE 2-3 CHRONICLES (목록·읽기 화면·명조/고딕·크기·진행선·이어 읽기·잠긴 글)
 - ✅ 2-4-B SUBJECT 01 화면 (/subject/01, 인라인 검은 줄, R-01~04 열람·걷힘 연출, 06 마지막 줄 지연 표시)
 - ✅ 2-4-C 프로필 사진 업로드 (콘솔 SUBJECT PHOTOGRAPHS, 교체 시 이전 파일 삭제)
+- ✅ 2-5-A SUBJECT 02 데이터·화면 (렌즈 제외)
 - ⬜ PHASE 2 남은 것: 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
 - ⬜ PHASE 3 정리: 옛 파일 삭제 (`App.jsx`, Tailwind 등. `src/supabase.js`는 유지)

@@ -1,0 +1,109 @@
+/* ==========================================================
+   RF-01 / LENS (SUBJECT 02)
+   ========================================================== */
+
+/* 렌즈 테두리: 화면에 고정, 마우스를 따라 이동 */
+.rf-lens {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 8900;          /* HUD(8000) 위, 빛(9000)·커서(9500) 아래 */
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 200ms linear;
+}
+.rf-lens i {
+  position: absolute;
+  left: calc(var(--r, 0px) * -1);
+  top: calc(var(--r, 0px) * -1);
+  width: calc(var(--r, 0px) * 2);
+  height: calc(var(--r, 0px) * 2);
+  border-radius: 50%;
+  border: 1px solid rgba(var(--ink-rgb), 0.5);
+  background: radial-gradient(
+    circle,
+    rgba(var(--evie-rgb), 0.2) 0%,
+    rgba(var(--evie-rgb), 0.08) 65%,
+    rgba(var(--evie-rgb), 0) 100%
+  );
+  box-shadow:
+    0 0 0 4px rgba(238, 241, 238, 0.35),
+    0 0 28px rgba(var(--evie-rgb), 0.35);
+}
+
+/* 겉 문장 / 숨은 문장: 렌즈가 가까이 오면 원 모양으로 바꿔 보여줌 */
+.rf-sub__layers {
+  --r: 0px;
+  --mx: -999px;
+  --my: -999px;
+}
+
+/* 원 안: 겉 문장 지우기 */
+.rf-sub__layers.is-lensed .rf-sub__face {
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--mx) var(--my),
+    transparent calc(100% - 10px),
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--r) at var(--mx) var(--my),
+    transparent calc(100% - 10px),
+    #000 100%
+  );
+}
+
+/* 원 안: 숨은 문장 드러내기 */
+.rf-sub__layers.is-lensed .rf-sub__under {
+  visibility: visible;
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--mx) var(--my),
+    #000 calc(100% - 10px),
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--r) at var(--mx) var(--my),
+    #000 calc(100% - 10px),
+    transparent 100%
+  );
+}
+
+.rf-sub__under {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* 찾은 줄: ◌ → ● */
+.rf-sub__line.is-found .rf-sub__mark {
+  font-size: 0;
+}
+.rf-sub__line.is-found .rf-sub__mark::before {
+  content: '●';
+  font-size: 0.5625rem;
+  color: var(--ink-40);
+}
+
+/* 렌즈 안내 문구: PC / 폰 */
+.rf-sub__hint {
+  color: var(--ink-40);
+}
+.rf-sub__hint-touch {
+  display: none;
+}
+@media (hover: none) {
+  .rf-sub__hint-pc {
+    display: none;
+  }
+  .rf-sub__hint-touch {
+    display: inline;
+  }
+  /* 길게 누를 때 글자 선택·메뉴가 뜨지 않게 */
+  .rf-sub__lines {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}

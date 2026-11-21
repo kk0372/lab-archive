@@ -470,7 +470,7 @@
 
   /* 왼쪽 여백 = 오른쪽 여백 + 페이지 바깥 여백 → 눈으로 보기에 양쪽이 같게 */
   .rf-sub__main {
-    padding-left: calc(var(--gutter) + clamp(0px, 3vw, 3rem));
+    padding-left: calc(var(--gutter) + clamp(0px, 4vw, 4rem));
     padding-right: clamp(0px, 3vw, 3rem);
   }
   .rf-sub__main > * {
@@ -538,4 +538,26 @@
 }
 .rf-sub__under {
   visibility: hidden;
+}
+
+/* ==========================================================
+   2-5-B 보정: 라벨 칸 폭 고정 → ◌ 줄과 다른 줄의 값 시작선 맞춤
+   ========================================================== */
+
+.rf-sub__line.has-lens {
+  padding-right: 0;
+}
+.rf-sub__mark {
+  right: -1.25rem;   /* 줄 바깥 여백에 표시 */
+}
+
+@media (min-width: 901px) {
+  .rf-sub__line {
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .rf-sub__line {
+    grid-template-columns: 9rem minmax(0, 1fr);
+  }
 }

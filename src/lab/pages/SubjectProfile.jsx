@@ -4,6 +4,7 @@ import { fetchSubjectPhoto, unlockRedactions, savedCode, imageUrl, pad2 } from '
 import { useAuth } from '../data/auth.js'
 import './admin.css'          // 입력칸·버튼 스타일 재사용
 import './subject.css'
+import Lens from '../components/Lens.jsx'
 
 /* 검은 줄 안을 채우는 투명 글자: 실제 한글처럼 폭을 차지하고 줄바꿈됨 */
 const FILL = '가'
@@ -239,6 +240,8 @@ export default function SubjectProfile({ id }) {
 
   const firstLockRef = useRef(null)
   const sectionRefs = useRef({})
+  const mainRef = useRef(null)
+  const [found, setFound] = useState(0)   // 렌즈로 찾은 개수
 
   /* 열리는 줄 번호 (R-01 ~) */
   const lockNo = useMemo(() => {
@@ -412,6 +415,14 @@ export default function SubjectProfile({ id }) {
                 <span className="rf-spec__value rf-mono">{pad2(stats.struck)}</span>
               </li>
             )}
+            {stats.lenses > 0 && (
+              <li>
+                <span className="rf-label">Anomalies</span>
+                <span className="rf-spec__value rf-mono">
+                  {pad2(found)} / {pad2(stats.lenses)}
+                </span>
+              </li>
+            )}
             {stats.sealed > 0 && (
               <li>
                 <span className="rf-label">Sealed</span>
@@ -432,6 +443,14 @@ export default function SubjectProfile({ id }) {
             )}
           </ul>
 
+          {stats.lenses > 0 && (
+            <p className="rf-label rf-sub__hint">
+              ◌ Inspect with lens —{' '}
+              <span className="rf-sub__hint-pc">hover</span>
+              <span className="rf-sub__hint-touch">long-press</span>
+            </p>
+          )}
+
           <nav className="rf-sub__index" aria-label="Sections">
             {s.sections.map((sec) => (
               <button key={sec.no} type="button" className="rf-label" onClick={() => jump(sec.no)}>
@@ -442,7 +461,7 @@ export default function SubjectProfile({ id }) {
         </aside>
 
         {/* ── 오른쪽: 기록 ── */}
-        <div className="rf-sub__main">
+        <div ref={mainRef} className="rf-sub__main">
           {s.sections.map((sec) => (
             <section
               key={sec.no}
@@ -483,6 +502,7 @@ export default function SubjectProfile({ id }) {
           {stats.locks > 0 && <AccessPanel count={stats.locks} mode={mode} onUnlock={onUnlock} />}
         </div>
       </div>
+      {stats.lenses > 0 && <Lens rootRef={mainRef} id={id} onFound={setFound} />}
     </main>
   )
 }
