@@ -2,14 +2,17 @@ import { useEffect } from 'react'
 
 /* ── 조절 손잡이 ── */
 export const DRIFT = {
-  max: 160,     // 최대로 내려가는 거리 (px)
-  ease: 0.12,   // 따라오는 속도 (작을수록 느긋하게)
-  bottom: 96,   // 화면 아래(HUD)와 남겨둘 간격 (px)
+  reachAt: 0.55, // 본문 진행도가 이만큼일 때 왼쪽 칸 맨 아래까지 다 드러남 (0~1)
+  ease: 0.12,    // 따라오는 속도 (작을수록 느긋하게)
+  bottom: 80,    // 다 드러났을 때 화면 아래(HUD)와 남길 간격 (px)
+  nudge: 24,     // 칸이 화면에 다 들어갈 때도 살짝 올라가는 거리 (px, 0이면 안 움직임)
 }
 
+const clamp01 = (v) => Math.min(1, Math.max(0, v))
+
 /**
- * 스크롤 진행도에 맞춰 왼쪽 칸(sticky)을 아주 천천히 아래로 내림
- * sideRef: 왼쪽 칸 / gridRef: 왼쪽 칸 + 본문을 감싼 격자
+ * 본문을 스크롤하면 왼쪽 칸(sticky)이 본문보다 느리게 위로 올라가면서
+ * 화면 아래에 가려져 있던 부분(표, 섹션 바로가기)을 조금씩 드러냄
  */
 export default function useSideDrift(sideRef, gridRef) {
   useEffect(() => {
@@ -29,16 +32,18 @@ export default function useSideDrift(sideRef, gridRef) {
         return
       }
       const top = parseFloat(cs.top) || 0
+      const vh = window.innerHeight
       const g = grid.getBoundingClientRect()
-      const h = side.offsetHeight
-      const range = g.height - h
-      if (range <= 0) {
+      const span = g.height - (vh - top)   // 본문이 스크롤되는 거리
+      if (span <= 0) {
         target = 0
         return
       }
-      const p = Math.min(1, Math.max(0, (top - g.top) / range))   // 본문 진행도 0~1
-      const room = window.innerHeight - top - h - DRIFT.bottom      // 아래 남은 공간
-      target = p * Math.max(0, Math.min(room, DRIFT.max))
+      const p = clamp01((top - g.top) / span)              // 본문 진행도
+      const reveal = Math.min(1, p / DRIFT.reachAt)         // 칸이 드러난 정도
+      const hidden = side.offsetHeight - (vh - top - DRIFT.bottom) // 화면 아래 가려진 길이
+      const dist = hidden > 0 ? hidden : DRIFT.nudge
+      target = -reveal * dist
     }
 
     const tick = () => {

@@ -561,3 +561,20 @@
     grid-template-columns: 9rem minmax(0, 1fr);
   }
 }
+
+/* ==========================================================
+   2-5 보정: 왼쪽 칸 = 칸 안 스크롤 대신, 본문 스크롤에 맞춰 천천히 올라옴
+   ========================================================== */
+@media (min-width: 901px) {
+  .rf-sub__side {
+    max-height: none;
+    overflow: visible;
+    will-change: transform;
+  }
+}
+/* 창이 낮을 때도 같은 방식으로 (예전 '따라오지 않음' 규칙 해제) */
+@media (min-width: 901px) and (max-height: 560px) {
+  .rf-sub__side {
+    position: sticky;
+  }
+}
