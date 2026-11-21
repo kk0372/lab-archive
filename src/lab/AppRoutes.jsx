@@ -47,7 +47,8 @@ const BUILT = {
   '/visual': <Visual />,
   '/logs': <Logs />,
   '/chronicles': <Chronicles />,
-  '/subject/01': <SubjectProfile id="yeon" />,
+  '/subject/01': <SubjectProfile key="yeon" id="yeon" />,
+  '/subject/02': <SubjectProfile key="evie" id="evie" />,
 }
 
 export default function AppRoutes() {

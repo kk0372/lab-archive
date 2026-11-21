@@ -474,7 +474,7 @@
     padding-right: clamp(0px, 3vw, 3rem);
   }
   .rf-sub__main > * {
-    max-width: 38rem;
+    max-width: 32rem;
   }
 
   /* 기록 표: 한 단계 작게 */
@@ -496,4 +496,46 @@
   .rf-sub__sec {
     margin-bottom: var(--sp-6);
   }
+}
+
+/* ==========================================================
+   2-5-A: 정정(취소선) + 렌즈 문장 자리
+   ========================================================== */
+
+/* 예온이가 쓰고 지운 말 */
+.rf-sub__v del {
+  margin-right: 0.35em;
+  color: var(--ink-40);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--ink-60);
+}
+
+/* 렌즈 문장이 있는 줄: 오른쪽 끝에 옅은 ◌ */
+.rf-sub__line.has-lens {
+  position: relative;
+  padding-right: 1.75rem;
+}
+.rf-sub__mark {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--ink-20);
+  pointer-events: none;
+}
+
+/* 겉 문장과 렌즈 문장을 같은 자리에 겹침 (렌즈 문장은 2-5-B 전까지 숨김) */
+.rf-sub__layers {
+  display: grid;
+}
+.rf-sub__face,
+.rf-sub__under {
+  grid-area: 1 / 1;
+}
+.rf-sub__under {
+  visibility: hidden;
 }

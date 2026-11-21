@@ -24,8 +24,33 @@ function Bar({ n, label = 'Redacted', restricted = false }) {
 const onlyBars = (v) => /^(\s*\[\[\d+\]\]\s*)+$/.test(v ?? '')
 
 function Inline({ v }) {
-  return parseInline(v).map((s, i) =>
-    s.t === 'bar' ? <Bar key={i} n={s.n} /> : <Fragment key={i}>{s.v}</Fragment>,
+  return parseInline(v).map((s, i) => {
+    if (s.t === 'bar') return <Bar key={i} n={s.n} />
+    if (s.t === 'del') return <del key={i}>{s.v}</del>
+    return <Fragment key={i}>{s.v}</Fragment>
+  })
+}
+
+/* 값 칸: 렌즈 문장이 있으면 겉 문장과 같은 자리에 겹쳐 둠 (2-5-B에서 렌즈로 드러남) */
+function Value({ line }) {
+  if (!line.lens) {
+    return (
+      <span className="rf-sub__v">
+        <Inline v={line.v} />
+      </span>
+    )
+  }
+  return (
+    <span className="rf-sub__v">
+      <span className="rf-sub__layers">
+        <span className="rf-sub__face">
+          <Inline v={line.v} />
+        </span>
+        <span className="rf-sub__under" aria-hidden="true">
+          {line.lens}
+        </span>
+      </span>
+    </span>
   )
 }
 
@@ -53,9 +78,7 @@ function FaintLine({ line }) {
   return (
     <div ref={ref} className={`rf-sub__line is-faint${seen ? ' is-seen' : ''}`}>
       <span className="rf-sub__k">{line.k}</span>
-      <span className="rf-sub__v">
-        <Inline v={line.v} />
-      </span>
+      <Value line={line} />
     </div>
   )
 }
@@ -91,13 +114,19 @@ function Line({ line }) {
   if (line.faint) return <FaintLine line={line} />
   const sealedRow = !line.k && onlyBars(line.v)   // 라벨 없는 가린 줄 → SEALED 표시
   const full = !line.k && !sealedRow              // 라벨 없는 일반 문장 → 한 줄 전체
+  const cls = ['rf-sub__line', full ? 'rf-sub__line--nok' : '', line.lens ? 'has-lens' : '']
+    .filter(Boolean)
+    .join(' ')
   return (
-    <div className={`rf-sub__line${full ? ' rf-sub__line--nok' : ''}`}>
+    <div className={cls}>
       {line.k && <span className="rf-sub__k">{line.k}</span>}
       {sealedRow && <span className="rf-sub__k rf-sub__stag">Sealed</span>}
-      <span className="rf-sub__v">
-        <Inline v={line.v} />
-      </span>
+      <Value line={line} />
+      {line.lens && (
+        <span className="rf-sub__mark" aria-hidden="true">
+          ◌
+        </span>
+      )}
     </div>
   )
 }
@@ -146,7 +175,8 @@ function AccessPanel({ count, mode, onUnlock }) {
 
       {mode === 'granted' && (
         <p className="rf-sub__accesstext">
-          Clearance granted — {pad2(count)} lines declassified. Sealed entries remain sealed.
+          Clearance granted — {pad2(count)} line{count > 1 ? 's' : ''} declassified. Sealed
+          entries remain sealed.
         </p>
       )}
 
@@ -221,6 +251,8 @@ export default function SubjectProfile({ id }) {
   /* 사진 */
   useEffect(() => {
     let alive = true
+    setPhoto(undefined)
+    setPhotoLoaded(false)
     fetchSubjectPhoto(id)
       .then((r) => {
         if (alive) setPhoto(r?.path ?? null)
@@ -268,7 +300,7 @@ export default function SubjectProfile({ id }) {
     return () => {
       alive = false
     }
-  }, [loading, userId, owner])
+  }, [id, loading, userId, owner])
 
   const onUnlock = async (code) => {
     const r = await unlockRedactions(code)
@@ -288,16 +320,26 @@ export default function SubjectProfile({ id }) {
 
   const clearance = { checking: 'Checking…', sealed: 'None', granted: 'Granted', owner: 'Owner' }[mode]
 
+  /* 머리 숫자: 0인 항목은 생략 */
+  const counters = [
+    stats.struck ? `Struck ${pad2(stats.struck)}` : null,
+    stats.sealed ? `Sealed ${pad2(stats.sealed)}` : null,
+    stats.locks ? `Restricted ${pad2(stats.locks)}` : null,
+    stats.locks ? `Clearance ${clearance}` : null,
+  ].filter(Boolean)
+
   return (
     <main className="rf-sub">
       <div className="rf-sub__top">
-        <span className="rf-label">({s.no}) Profile</span>
+        <span className="rf-label">
+          ({s.no}) {s.observed === s.recorder ? 'Profile' : 'Observation'}
+        </span>
         <span className="rf-label">RF-01 / Subject file</span>
       </div>
       <h1 className="rf-display rf-sub__title">Subject {s.no}</h1>
       <p className="rf-sub__name">
         <b>{s.name}</b>
-        <span className="rf-sub__hanja">{s.hanja}</span>
+        {s.hanja && <span className="rf-sub__hanja">{s.hanja}</span>}
         <span className="rf-label rf-mono">{s.latin}</span>
       </p>
 
@@ -306,10 +348,8 @@ export default function SubjectProfile({ id }) {
           {s.kind} · Recorder {s.recorder} / Observed {s.observed}
         </span>
         <span className="rf-sub__barend">
-          <span className="rf-label rf-mono">
-            Sealed {pad2(stats.sealed)} · Restricted {pad2(stats.locks)} · Clearance {clearance}
-          </span>
-          {mode === 'sealed' && (
+          <span className="rf-label rf-mono">{counters.join(' · ')}</span>
+          {mode === 'sealed' && stats.locks > 0 && (
             <button type="button" className="rf-label rf-sub__req" onClick={toAccess}>
               Request access ↓
             </button>
@@ -366,18 +406,30 @@ export default function SubjectProfile({ id }) {
                 {s.recorder} / {s.observed}
               </span>
             </li>
-            <li>
-              <span className="rf-label">Sealed</span>
-              <span className="rf-spec__value rf-mono">{pad2(stats.sealed)}</span>
-            </li>
-            <li>
-              <span className="rf-label">Restricted</span>
-              <span className="rf-spec__value rf-mono">{pad2(stats.locks)}</span>
-            </li>
-            <li>
-              <span className="rf-label">Clearance</span>
-              <span className="rf-spec__value rf-mono">{clearance}</span>
-            </li>
+            {stats.struck > 0 && (
+              <li>
+                <span className="rf-label">Struck</span>
+                <span className="rf-spec__value rf-mono">{pad2(stats.struck)}</span>
+              </li>
+            )}
+            {stats.sealed > 0 && (
+              <li>
+                <span className="rf-label">Sealed</span>
+                <span className="rf-spec__value rf-mono">{pad2(stats.sealed)}</span>
+              </li>
+            )}
+            {stats.locks > 0 && (
+              <>
+                <li>
+                  <span className="rf-label">Restricted</span>
+                  <span className="rf-spec__value rf-mono">{pad2(stats.locks)}</span>
+                </li>
+                <li>
+                  <span className="rf-label">Clearance</span>
+                  <span className="rf-spec__value rf-mono">{clearance}</span>
+                </li>
+              </>
+            )}
           </ul>
 
           <nav className="rf-sub__index" aria-label="Sections">
@@ -428,7 +480,7 @@ export default function SubjectProfile({ id }) {
             ))}
           </footer>
 
-          <AccessPanel count={stats.locks} mode={mode} onUnlock={onUnlock} />
+          {stats.locks > 0 && <AccessPanel count={stats.locks} mode={mode} onUnlock={onUnlock} />}
         </div>
       </div>
     </main>
