@@ -5,6 +5,7 @@ import { useAuth } from '../data/auth.js'
 import './admin.css'          // 입력칸·버튼 스타일 재사용
 import './subject.css'
 import Lens from '../components/Lens.jsx'
+import useSideDrift from '../components/useSideDrift.js'
 
 /* 검은 줄 안을 채우는 투명 글자: 실제 한글처럼 폭을 차지하고 줄바꿈됨 */
 const FILL = '가'
@@ -241,6 +242,9 @@ export default function SubjectProfile({ id }) {
   const firstLockRef = useRef(null)
   const sectionRefs = useRef({})
   const mainRef = useRef(null)
+  const sideRef = useRef(null)
+  const gridRef = useRef(null)
+  useSideDrift(sideRef, gridRef)
   const [found, setFound] = useState(0)   // 렌즈로 찾은 개수
 
   /* 열리는 줄 번호 (R-01 ~) */
@@ -360,9 +364,9 @@ export default function SubjectProfile({ id }) {
         </span>
       </div>
 
-      <div className="rf-sub__grid">
+      <div ref={gridRef} className="rf-sub__grid">
         {/* ── 왼쪽: 사진 + 표본 정보 ── */}
-        <aside className="rf-sub__side">
+        <aside ref={sideRef} className="rf-sub__side">
           <figure className="rf-sub__photo">
             <div
               className={`rf-sub__plate${photo ? '' : ' is-empty'}${photoLoaded ? ' is-loaded' : ''}`}

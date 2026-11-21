@@ -4,6 +4,7 @@ import HudFrame from './components/HudFrame.jsx'
 import Cursor from './components/Cursor.jsx'
 import Menu from './components/Menu.jsx'
 import './layout.css'
+import { startSmoothScroll, getLenis } from './smooth.js'
 
 /* ──────────────────────────────────────────────
    메뉴 목록: 페이지 이름·순서는 여기서만 고치면 됨
@@ -92,6 +93,7 @@ export default function Layout() {
   useEffect(() => {
     if (prevPath.current === location.pathname) return
     prevPath.current = location.pathname
+    getLenis()?.scrollTo(0, { immediate: true, force: true })
     window.scrollTo(0, 0)
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -111,6 +113,7 @@ export default function Layout() {
   }, [location.pathname])
 
   useEffect(() => () => clearTimeout(coverTimer.current), [])
+  useEffect(() => startSmoothScroll(), [])
 
   return (
     <TransitionContext.Provider value={go}>

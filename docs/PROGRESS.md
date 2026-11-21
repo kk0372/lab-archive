@@ -67,6 +67,7 @@ src/lab/
    ├─ AdminEditor.jsx           /admin/:section/new, /admin/:section/:id  ⚠️ 0번 규칙
    ├─ admin.css
    └─ editor.css                ⚠️ 0번 규칙
+components/Lens.jsx` + `lens.css` (SUBJECT 02 렌즈, `.rf-sub__layers` 마스크 방식) 추가
 ```
 ## 5. 주소
 | 주소 | 상태 |
@@ -100,6 +101,7 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 | 아이폰 사파리 분홍 줄 | FocusText `maxBlurMobile: 0` + blur 0이면 filter `none` |
 | 폰에서 EDIT 안 보임 | `.rf-admin__pending { display:none }` 규칙 삭제 |
 | `api.js` 연결 실패 | import 경로는 `../../supabase.js`, export 이름 자동 탐색 |
+| ◌ 줄만 값 시작선이 어긋남 | 라벨 칸 폭을 %에서 고정값으로 |
 ## 8. 제품 결정
 - DAY 001 = **이비 귀국일**(= 공항 마중 = 보호 시작). DAY 001 = **2024-10-23 (수, 상강)**. api.js에 설정 완료. 기록은 서사 시간으로 관찰 시각을 직접 입력. 귀국 전 시각은 `PRE-OBS.`
 - CLASSIFIED: (b) 비밀번호 열람. 목록에는 제목 숨김, `[CLASSIFIED] RF-01-C/0012` + 날짜만. 열람 코드 설정은 SQL로 완료(별도 UI 없음)
@@ -126,5 +128,6 @@ api.js 주요 함수: `fetchStubs, fetchPosts, fetchSection, fetchPost, unlockCl
 - ✅ 2-4-B SUBJECT 01 화면 (/subject/01, 인라인 검은 줄, R-01~04 열람·걷힘 연출, 06 마지막 줄 지연 표시)
 - ✅ 2-4-C 프로필 사진 업로드 (콘솔 SUBJECT PHOTOGRAPHS, 교체 시 이전 파일 삭제)
 - ✅ 2-5-A SUBJECT 02 데이터·화면 (렌즈 제외)
+- ✅ 2-5-B 렌즈 (PC 마우스 / 폰 길게 누르기, 발견 개수 ANOMALIES)
 - ⬜ PHASE 2 남은 것: 2-5 SUBJECT 02(렌즈 커서) → 2-6 INTERACTION → 2-7 이스터에그
 - ⬜ PHASE 3 정리: 옛 파일 삭제 (`App.jsx`, Tailwind 등. `src/supabase.js`는 유지)
