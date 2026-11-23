@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import './lens.css'
 
 /* ── 조절 손잡이 ── */
-const R = 65          // 렌즈 반지름 (px)
+const R = 62          // 렌즈 반지름 (px)
 const FOLLOW = 0.22   // 따라오는 속도 (작을수록 느긋하게)
 const HOLD_MS = 400   // 폰: 길게 누르는 시간
 const LIFT = 72       // 폰: 손가락 위로 띄우는 거리 (px)
